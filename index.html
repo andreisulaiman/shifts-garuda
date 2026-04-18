@@ -25,6 +25,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+        }
+
+        /* ----- GOOGLE T-REX (top right) ----- */
+        .trex-corner {
+            position: fixed;
+            top: 20px;
+            right: 25px;
+            z-index: 100;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .trex-corner:hover {
+            opacity: 1;
+        }
+        .trex-svg {
+            width: 48px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         .container {
@@ -169,7 +189,8 @@
             color: #5a6275;
         }
 
-        .filter-input {
+        /* Dropdown styling similar to month select */
+        .filter-select {
             padding: 0.9rem 1.2rem;
             border: 1.8px solid #dfe3ec;
             border-radius: 24px;
@@ -179,17 +200,18 @@
             font-family: inherit;
             color: #1e1e24;
             box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a6275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 14px;
+            cursor: pointer;
         }
 
-        .filter-input:focus {
+        .filter-select:focus {
             outline: none;
             border-color: #6b8cae;
             box-shadow: 0 4px 12px rgba(43, 58, 103, 0.08), 0 0 0 3px rgba(63, 90, 140, 0.06);
-        }
-
-        .filter-input::placeholder {
-            color: #9aa1b0;
-            font-weight: 400;
         }
 
         .btn-reset {
@@ -218,26 +240,26 @@
             transform: translateY(-1px);
         }
 
-        /* ----- TABLE WRAPPER WITH SCROLL ----- */
+        /* ----- TABLE WRAPPER ----- */
         .table-wrapper {
             overflow: auto;
             border-radius: 24px;
             background: white;
             box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
-            max-height: 70vh;  /* Limits height so vertical scroll activates */
+            max-height: 70vh;
             max-width: 100%;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;  /* Required for sticky with border-radius */
+            border-collapse: separate;
             border-spacing: 0;
             font-size: 0.95rem;
             min-width: 700px;
             position: relative;
         }
 
-        /* ----- STICKY HEADER ROW (freezes on vertical scroll) ----- */
+        /* STICKY HEADER */
         th {
             position: sticky;
             top: 0;
@@ -252,7 +274,6 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
-            /* Shadow for depth when scrolled */
             box-shadow: 0 2px 4px -2px rgba(0,0,0,0.06);
         }
 
@@ -284,22 +305,31 @@
             color: #1e2f4b;
         }
 
-        /* ----- STICKY FIRST COLUMN (freezes on horizontal scroll) ----- */
+        /* ----- STICKY FIRST COLUMN (FIXED BACKGROUND) ----- */
         th:first-child,
         td:first-child {
             position: sticky;
             left: 0;
             z-index: 5;
-            background-color: inherit;
+            /* Solid white background to prevent bleed */
+            background-color: #ffffff !important;
         }
 
-        /* Ensure header first cell has correct background and higher z-index */
+        /* Header first cell background */
         th:first-child {
-            background-color: #f8faff;
-            z-index: 15;  /* Above body sticky column and header row */
+            background-color: #f8faff !important;
+            z-index: 15;
         }
 
-        /* Right-edge shadow for sticky column */
+        /* Override zebra striping for sticky column */
+        tbody tr:nth-child(even) td:first-child {
+            background-color: #fbfdff !important;
+        }
+        tbody tr:hover td:first-child {
+            background-color: #eef3fe !important;
+        }
+
+        /* Shadow on right edge of sticky column */
         th:first-child::after,
         td:first-child::after {
             content: '';
@@ -308,19 +338,10 @@
             right: -6px;
             width: 6px;
             height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
+            background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
             pointer-events: none;
         }
 
-        /* Keep zebra striping consistent for sticky column */
-        tbody tr:nth-child(even) td:first-child {
-            background-color: #fbfdff;
-        }
-        tbody tr:hover td:first-child {
-            background-color: #eef3fe;
-        }
-
-        /* Empty message */
         .empty-message {
             text-align: center;
             padding: 4rem !important;
@@ -368,12 +389,30 @@
             .container { padding: 1.5rem; }
             h1 { font-size: 2rem; }
             .btn-reset { margin-left: 0; }
+            .trex-corner { top: 10px; right: 15px; }
+            .trex-svg { width: 36px; }
         }
     </style>
     <!-- Papa Parse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
+
+<!-- Google T-Rex (playful touch) -->
+<div class="trex-corner" title="Rawr!">
+    <svg class="trex-svg" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M54 14L48 8L42 14L36 8L30 14L24 8L18 14L12 8L6 14L0 20V42H6L12 48L18 42L24 48L30 42L36 48L42 42L48 48L54 42H60V20L54 14Z" fill="#4B5563"/>
+        <circle cx="42" cy="24" r="3" fill="white"/>
+        <circle cx="18" cy="24" r="3" fill="white"/>
+        <path d="M24 36H36V42H24V36Z" fill="#2B3A67"/>
+        <!-- little ground line -->
+        <line x1="0" y1="52" x2="60" y2="52" stroke="#4B5563" stroke-width="2"/>
+        <!-- tiny cactus -->
+        <rect x="52" y="36" width="4" height="16" fill="#4B5563" rx="2"/>
+        <rect x="50" y="40" width="8" height="4" fill="#4B5563" rx="2"/>
+    </svg>
+</div>
+
 <div class="container">
     <div class="header-section">
         <div class="header-top">
@@ -398,11 +437,13 @@
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- Filter controls -->
+    <!-- Filter controls: now dropdown for names -->
     <div class="filter-panel">
         <div class="filter-group">
-            <label for="nameFilter">👤 Team member</label>
-            <input type="text" id="nameFilter" class="filter-input" placeholder="Type a name…" autocomplete="off">
+            <label for="nameFilterSelect">👤 Team member</label>
+            <select id="nameFilterSelect" class="filter-select">
+                <option value="">All members</option>
+            </select>
         </div>
         <button class="btn-reset" id="resetFilters">
             <span>↻</span> Clear filters
@@ -432,22 +473,18 @@
         "use strict";
 
         // ---------- CONFIGURATION: ADD YOUR MONTH URLs ----------
-        // Replace the URLs below with your published CSV links from Google Sheets.
-        // Example:
-        // { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv" }
         const monthConfig = [
             { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
-            { label: "May 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv" },
-            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv" },
+            { label: "May 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pubhtml?gid=969043239&single=true" },
+            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pubhtml?gid=1108356911&single=true" },
             { label: "July 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
-            
             // Add more months as needed
         ];
         // ---------------------------------------------------------
 
         // DOM elements
         const monthSelect = document.getElementById('monthSelect');
-        const nameInput = document.getElementById('nameFilter');
+        const nameFilterSelect = document.getElementById('nameFilterSelect');
         const resetBtn = document.getElementById('resetFilters');
         const tbody = document.getElementById('tableBody');
         const theadRow = document.getElementById('tableHeader');
@@ -459,6 +496,52 @@
         let headers = [];
         let filteredRows = [];
         let currentCsvUrl = '';
+        let nameColumns = [];
+
+        // Extract unique names from data using detected name columns
+        function extractUniqueNames(rows) {
+            if (!nameColumns.length) return [];
+            const namesSet = new Set();
+            rows.forEach(row => {
+                nameColumns.forEach(col => {
+                    const val = row[col];
+                    if (val && val.toString().trim() !== '') {
+                        namesSet.add(val.toString().trim());
+                    }
+                });
+            });
+            return Array.from(namesSet).sort((a, b) => a.localeCompare(b));
+        }
+
+        // Populate name dropdown
+        function populateNameDropdown() {
+            const uniqueNames = extractUniqueNames(allRows);
+            const currentValue = nameFilterSelect.value;
+            nameFilterSelect.innerHTML = '<option value="">All members</option>';
+            uniqueNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                nameFilterSelect.appendChild(option);
+            });
+            // Restore selection if possible
+            if (currentValue && uniqueNames.includes(currentValue)) {
+                nameFilterSelect.value = currentValue;
+            } else {
+                nameFilterSelect.value = '';
+            }
+        }
+
+        // Identify name columns
+        function detectNameColumns() {
+            nameColumns = headers.filter(h => 
+                /name|nama|staff|anggota|member|person|team/i.test(h)
+            );
+            // Fallback: if no name-like column, use first column
+            if (nameColumns.length === 0 && headers.length > 0) {
+                nameColumns = [headers[0]];
+            }
+        }
 
         function renderTable() {
             if (!headers.length) {
@@ -485,23 +568,15 @@
         }
 
         function applyFilter() {
-            const nameQuery = nameInput.value.trim().toLowerCase();
-            if (nameQuery === '') {
+            const selectedName = nameFilterSelect.value;
+            if (selectedName === '') {
                 filteredRows = [...allRows];
             } else {
                 filteredRows = allRows.filter(row => {
-                    const nameColumns = headers.filter(h => 
-                        /name|nama|staff|anggota|member/i.test(h)
-                    );
-                    if (nameColumns.length > 0) {
-                        return nameColumns.some(col => {
-                            const val = (row[col] || '').toString().toLowerCase();
-                            return val.includes(nameQuery);
-                        });
-                    }
-                    return Object.values(row).some(v => 
-                        (v || '').toString().toLowerCase().includes(nameQuery)
-                    );
+                    return nameColumns.some(col => {
+                        const val = (row[col] || '').toString().trim();
+                        return val === selectedName;
+                    });
                 });
             }
             renderTable();
@@ -515,7 +590,7 @@
         }
 
         function resetFilters() {
-            nameInput.value = '';
+            nameFilterSelect.value = '';
             filteredRows = [...allRows];
             renderTable();
             updateResultCount();
@@ -538,6 +613,10 @@
                         allRows = results.data.filter(row => 
                             Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
                         );
+                        
+                        detectNameColumns();
+                        populateNameDropdown();
+                        
                         filteredRows = [...allRows];
                         renderTable();
                         updateResultCount();
@@ -581,12 +660,8 @@
             });
         }
 
-        let filterTimeout;
-        nameInput.addEventListener('input', () => {
-            clearTimeout(filterTimeout);
-            filterTimeout = setTimeout(applyFilter, 250);
-        });
-
+        // Event listeners
+        nameFilterSelect.addEventListener('change', applyFilter);
         resetBtn.addEventListener('click', resetFilters);
         
         refreshLink.addEventListener('click', (e) => {
