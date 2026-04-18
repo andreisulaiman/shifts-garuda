@@ -194,7 +194,58 @@
 
 <script>
     // 👇👇👇 IMPORTANT: Replace with YOUR Web App URL from Google Apps Script 👇👇👇
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxJx6Y2FRcJbjMFVSebhpi5LT2EaRPke5XEVQ0N0oTdxkZfI3g3qfQiI-p3qtXiQaFSoA/exec';   // <--- PASTE YOUR URL INSIDE THE QUOTES!
+    const API_URL = 'function doGet() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  
+  if (!data || data.length === 0) {
+    return ContentService.createTextOutput(JSON.stringify({"error": "No data found"}))
+          .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var headers = data[0];
+  var schedule = [];
+  
+  // Helper function to format a cell nicely
+  function formatValue(value, columnName) {
+    // If it's a Date object (real date or time)
+    if (value instanceof Date) {
+      // Check if column is Date, Start, or End
+      var lowerCol = columnName.toLowerCase();
+      if (lowerCol === 'date') {
+        // Format as YYYY/MM/DD
+        return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy/MM/dd");
+      } else if (lowerCol === 'start' || lowerCol === 'end') {
+        // Format as HH:MM (24-hour)
+        return Utilities.formatDate(value, Session.getScriptTimeZone(), "HH:MM");
+      } else {
+        // Fallback: show full date+time
+        return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy/MM/dd HH:MM");
+      }
+    }
+    // If it's a number that looks like a date (Excel serial), convert it
+    else if (typeof value === 'number' && value > 30000 && lowerCol === 'date') {
+      // Excel serial number to Date
+      var date = new Date((value - 25569) * 86400000);
+      return Utilities.formatDate(date, Session.getScriptTimeZone(), "yyyy/MM/dd");
+    }
+    // Return everything else as is
+    return value;
+  }
+  
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var entry = {};
+    for (var j = 0; j < headers.length; j++) {
+      var colName = headers[j];
+      entry[colName] = formatValue(row[j], colName);
+    }
+    schedule.push(entry);
+  }
+
+  var result = JSON.stringify(schedule);
+  return ContentService.createTextOutput(result).setMimeType(ContentService.MimeType.JSON);
+}';   // <--- PASTE YOUR URL INSIDE THE QUOTES!
     
     // Function to fetch schedule and render table
     async function loadSchedule() {
