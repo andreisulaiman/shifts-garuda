@@ -3,35 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Live Team Shift Schedule - with Filters</title>
+    <title>Team Shift Calendar – Monthly View</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             background: #f4f7fc;
             padding: 20px;
             color: #1e2a3e;
         }
-
         .container {
-            max-width: 1300px;
+            max-width: 100%;
             margin: 0 auto;
         }
-
         .header {
             background: white;
             border-radius: 28px;
             padding: 24px 32px;
             margin-bottom: 28px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             border: 1px solid #e9eef3;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
-
         h1 {
             font-size: 1.9rem;
             font-weight: 600;
@@ -41,7 +37,6 @@
             color: transparent;
             margin-bottom: 6px;
         }
-
         .sub {
             color: #4a627a;
             font-size: 0.95rem;
@@ -51,7 +46,6 @@
             flex-wrap: wrap;
             align-items: center;
         }
-
         .badge {
             background: #eef2ff;
             padding: 5px 12px;
@@ -60,360 +54,319 @@
             font-weight: 500;
             color: #1e3a8a;
         }
-
-        /* Filter bar */
         .filter-bar {
             background: white;
             border-radius: 20px;
-            padding: 16px 24px;
-            margin-bottom: 20px;
+            padding: 20px 28px;
+            margin-bottom: 24px;
             display: flex;
-            gap: 20px;
+            gap: 24px;
             flex-wrap: wrap;
             align-items: flex-end;
             border: 1px solid #e9eef3;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
-
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
-
         .filter-group label {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #5b7a9a;
         }
-
         .filter-group select, .filter-group button {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 40px;
             border: 1px solid #dce5ef;
             background: white;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             cursor: pointer;
             font-family: inherit;
+            min-width: 160px;
         }
-
-        .filter-group select {
-            min-width: 140px;
-        }
-
         .filter-group button {
             background: #1e3c72;
             color: white;
             border: none;
             font-weight: 500;
-            transition: background 0.2s;
         }
-
         .filter-group button:hover {
             background: #2b4c7c;
         }
-
-        .table-wrapper {
+        .calendar-wrapper {
             background: white;
             border-radius: 24px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             border: 1px solid #eef2f6;
             overflow-x: auto;
-            padding: 0;
         }
-
-        table {
+        .calendar-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
-            min-width: 560px;
+            font-size: 0.8rem;
+            min-width: 600px;
         }
-
-        th {
+        .calendar-table th {
             background: #f8fafd;
-            padding: 16px 18px;
-            text-align: left;
+            padding: 14px 10px;
+            text-align: center;
             font-weight: 600;
             color: #1f3a5f;
             border-bottom: 2px solid #e2e8f0;
-            font-size: 0.85rem;
-            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
-
-        td {
-            padding: 14px 18px;
+        .calendar-table td {
+            padding: 12px 8px;
+            text-align: center;
             border-bottom: 1px solid #ecf1f7;
-            color: #1e2f3f;
             vertical-align: middle;
         }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
+        .calendar-table tr:hover td {
             background-color: #fafcff;
         }
-
-        .shift-name {
+        .fixed-col {
             font-weight: 600;
+            text-align: left;
+            background-color: #fef9e6;
+        }
+        .shift-cell {
             background: #eef3fa;
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-        }
-
-        .time-range {
-            font-family: monospace;
-            font-size: 0.85rem;
-            background: #f1f5f9;
             padding: 4px 8px;
-            border-radius: 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .off-cell {
+            color: #b91c1c;
+            background: #fff0f0;
             display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
         }
-
-        .loading, .error, .no-results {
+        .loading, .error {
             text-align: center;
-            padding: 50px 20px;
+            padding: 60px 20px;
             font-size: 1rem;
-            background: white;
-            border-radius: 28px;
-            border: 1px solid #eef2f6;
         }
-
         .error {
             color: #b91c1c;
             background: #fff5f5;
-            border-color: #fed7d7;
         }
-
-        .no-results {
-            color: #6c86a3;
-            background: #fafcff;
-        }
-
         footer {
             margin-top: 30px;
             text-align: center;
             font-size: 0.7rem;
             color: #6c86a3;
         }
+        @media (max-width: 640px) {
+            .calendar-table th, .calendar-table td {
+                padding: 8px 6px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>📋 Team Shift Schedule</h1>
+        <h1>📅 Team Shift Calendar</h1>
         <div class="sub">
             <span>🕒 Live from Google Sheets</span>
             <span class="badge" id="last-updated">updating...</span>
         </div>
     </div>
 
-    <!-- FILTER BAR -->
     <div class="filter-bar">
+        <div class="filter-group">
+            <label>📆 Select Month</label>
+            <select id="monthSelect"></select>
+        </div>
         <div class="filter-group">
             <label>👤 Filter by Name</label>
             <select id="nameFilter">
-                <option value="all">All names</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label>📅 Filter by Day</label>
-            <select id="dayFilter">
-                <option value="all">All days</option>
+                <option value="all">All team members</option>
             </select>
         </div>
         <div class="filter-group">
             <label>&nbsp;</label>
-            <button id="resetFilters">Reset filters</button>
+            <button id="resetBtn">Reset filters</button>
         </div>
     </div>
 
-    <div class="table-wrapper">
-        <table id="schedule-table">
-            <thead id="table-head">
-                <tr><th colspan="5">Loading schedule...</th></tr>
-            </thead>
-            <tbody id="table-body"></tbody>
+    <div class="calendar-wrapper">
+        <table class="calendar-table" id="calendarTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody">
+                <tr><td colspan="3" class="loading">Select a month to load schedule</td></tr>
+            </tbody>
         </table>
     </div>
-    <footer>
-        ✅ Automatically reflects changes when Google Sheet is updated · Data refreshes every 5 minutes
-    </footer>
+    <footer>✅ Auto-refreshes every 5 minutes · Each month is a separate sheet in Google Sheets</footer>
 </div>
 
 <script>
-    // ======================== IMPORTANT ========================
-    // 👇 REPLACE THIS WITH YOUR PUBLISHED GOOGLE SHEET CSV LINK
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=0&single=true&output=csv';
+    // ============================================================
+    // 🔧 CONFIGURE YOUR MONTHS AND THEIR PUBLISHED CSV LINKS
+    // ============================================================
+    // Replace these with your actual CSV links from Google Sheets.
+    // Each link is unique per sheet (tab). Get them from:
+    // File → Share → Publish to web → [select sheet] → CSV → Publish → copy link
+    const monthSheets = {
+        "April 2026": "https://docs.google.com/spreadsheets/d/e/.../pub?gid=123456789&single=true&output=csv",
+        "May 2026":   "https://docs.google.com/spreadsheets/d/e/.../pub?gid=987654321&single=true&output=csv",
+        "June 2026":  "https://docs.google.com/spreadsheets/d/e/.../pub?gid=456789123&single=true&output=csv"
+        // Add more months as needed
+    };
     // ============================================================
 
-    let allShifts = [];      // store all parsed shifts
-    let currentFilters = { name: 'all', day: 'all' };
+    let currentData = {
+        rows: [],           // array of arrays (each row from CSV, starting from row 2)
+        headers: [],        // column headers (first row)
+        dayIndices: [],     // column indices for date columns (D onward)
+        dayNumbers: []      // day numbers extracted from headers (e.g., 1, 2, ...)
+    };
+    let fixedColIndices = { name: 0, emp: 1, site: 2 }; // A=0, B=1, C=2
 
-    // Helper: parse CSV (handles quoted fields)
+    // Helper: parse CSV (handles quotes)
     function parseCSV(csvText) {
         const rows = [];
         const regex = /(?:,|^)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
         const lines = csvText.split(/\r?\n/);
-        if (lines.length === 0) return rows;
-        
         for (let line of lines) {
             if (line.trim() === '') continue;
             const row = [];
             let match;
-            let lastIndex = 0;
-            let colIndex = 0;
-            // reset regex
             regex.lastIndex = 0;
             while ((match = regex.exec(line)) !== null) {
                 const val = match[1] !== undefined ? match[1].replace(/""/g, '"') : (match[2] || '');
                 row.push(val);
-                lastIndex = regex.lastIndex;
-                colIndex++;
             }
-            // handle trailing empty field
-            if (lastIndex === line.length) row.push('');
             rows.push(row);
         }
         return rows;
     }
 
-    // Render table based on current filters
-    function renderTable() {
-        const thead = document.getElementById('table-head');
-        const tbody = document.getElementById('table-body');
-        
-        if (allShifts.length === 0) {
-            thead.innerHTML = '<tr><th colspan="5">No data yet</th></tr>';
-            tbody.innerHTML = '';
-            return;
-        }
-
-        // Get headers from first row of allShifts (keys)
-        const headers = Object.keys(allShifts[0]);
-        // Build header row
-        thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-        // Apply filters
-        let filtered = [...allShifts];
-        if (currentFilters.name !== 'all') {
-            filtered = filtered.filter(shift => shift.Name === currentFilters.name);
-        }
-        if (currentFilters.day !== 'all') {
-            filtered = filtered.filter(shift => shift.Day === currentFilters.day);
-        }
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="' + headers.length + '" class="no-results">😴 No shifts match the filters. Try resetting.</td></tr>';
-            return;
-        }
-
-        // Build rows
-        let html = '';
-        for (const shift of filtered) {
-            html += '<tr>';
-            for (const header of headers) {
-                let value = shift[header] || '';
-                // Add nice styling to Name and Start/End
-                if (header === 'Name') {
-                    value = `<span class="shift-name">${escapeHtml(value)}</span>`;
-                } else if (header === 'Start' || header === 'End') {
-                    value = `<span class="time-range">${escapeHtml(value)}</span>`;
-                } else {
-                    value = escapeHtml(value);
-                }
-                html += `<td>${value}</td>`;
-            }
-            html += '</tr>';
-        }
-        tbody.innerHTML = html;
+    // Extract day number from header like "Apr 1", "April 1", "1", "2026-04-01"
+    function extractDayNumber(header) {
+        const match = header.match(/\b(\d{1,2})\b/);
+        if (match) return parseInt(match[1], 10);
+        return 0;
     }
 
-    // Update dropdown options based on current data
-    function updateFilterDropdowns() {
-        const nameSet = new Set();
-        const daySet = new Set();
-        for (const shift of allShifts) {
-            if (shift.Name) nameSet.add(shift.Name);
-            if (shift.Day) daySet.add(shift.Day);
-        }
-        
-        const nameSelect = document.getElementById('nameFilter');
-        const daySelect = document.getElementById('dayFilter');
-        
-        // Preserve current selection if possible
-        const oldName = nameSelect.value;
-        const oldDay = daySelect.value;
-        
-        nameSelect.innerHTML = '<option value="all">All names</option>';
-        [...nameSet].sort().forEach(name => {
-            nameSelect.innerHTML += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
-        });
-        
-        daySelect.innerHTML = '<option value="all">All days</option>';
-        [...daySet].sort().forEach(day => {
-            daySelect.innerHTML += `<option value="${escapeHtml(day)}">${escapeHtml(day)}</option>`;
-        });
-        
-        // Restore selection if still valid
-        if (oldName !== 'all' && nameSet.has(oldName)) nameSelect.value = oldName;
-        else nameSelect.value = 'all';
-        if (oldDay !== 'all' && daySet.has(oldDay)) daySelect.value = oldDay;
-        else daySelect.value = 'all';
-        
-        currentFilters.name = nameSelect.value;
-        currentFilters.day = daySelect.value;
-    }
+    async function loadMonth(monthKey) {
+        const url = monthSheets[monthKey];
+        if (!url) return;
 
-    // Load CSV from Google Sheets
-    async function loadSchedule() {
         const statusSpan = document.getElementById('last-updated');
+        statusSpan.innerText = 'loading...';
+
         try {
-            statusSpan.innerText = 'fetching...';
-            const response = await fetch(CSV_URL);
+            const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const csvText = await response.text();
-            const rows = parseCSV(csvText);
-            if (rows.length < 2) {
-                allShifts = [];
-                renderTable();
-                statusSpan.innerText = 'no data available';
-                return;
-            }
-            
-            const headers = rows[0];
-            const shifts = [];
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                const obj = {};
-                for (let j = 0; j < headers.length; j++) {
-                    let val = row[j] || '';
-                    // optional: trim whitespace
-                    val = val.trim();
-                    obj[headers[j]] = val;
+            const allRows = parseCSV(csvText);
+            if (allRows.length < 2) throw new Error('No data rows');
+
+            const headers = allRows[0];     // first row: headers (A1, B1, C1, D1...)
+            const dataRows = allRows.slice(1); // rows 2..end
+
+            // Identify date columns: all columns after index 2 (D onward)
+            const dayIndices = [];
+            const dayNumbers = [];
+            for (let i = 3; i < headers.length; i++) {
+                const header = headers[i];
+                const dayNum = extractDayNumber(header);
+                if (dayNum > 0 && dayNum <= 31) {
+                    dayIndices.push(i);
+                    dayNumbers.push(dayNum);
                 }
-                shifts.push(obj);
             }
-            allShifts = shifts;
-            
-            // Update filter dropdowns with new data
-            updateFilterDropdowns();
-            // Render with current filters (preserved)
-            renderTable();
-            
-            const now = new Date();
-            statusSpan.innerText = `last updated: ${now.toLocaleTimeString()}`;
-        } catch (error) {
-            console.error(error);
-            document.getElementById('table-head').innerHTML = '<tr><th colspan="5">⚠️ Error</th></tr>';
-            document.getElementById('table-body').innerHTML = '<tr class="error"><td colspan="5">Failed to load schedule. Check your CSV publish link and make sure sheet is published to web.</td></tr>';
+            // Sort by day number (so columns appear as 1,2,3... not 1,10,11...)
+            const combined = dayIndices.map((idx, pos) => ({ idx, day: dayNumbers[pos] }));
+            combined.sort((a,b) => a.day - b.day);
+            const sortedIndices = combined.map(c => c.idx);
+            const sortedDays = combined.map(c => c.day);
+
+            currentData = {
+                rows: dataRows,
+                headers: headers,
+                dayIndices: sortedIndices,
+                dayNumbers: sortedDays
+            };
+
+            // Populate name filter dropdown
+            const nameSet = new Set();
+            for (let row of dataRows) {
+                let name = row[fixedColIndices.name]?.trim();
+                if (name) nameSet.add(name);
+            }
+            const nameSelect = document.getElementById('nameFilter');
+            nameSelect.innerHTML = '<option value="all">All team members</option>';
+            [...nameSet].sort().forEach(name => {
+                nameSelect.innerHTML += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+            });
+
+            renderCalendar();
+            statusSpan.innerText = `updated: ${new Date().toLocaleTimeString()}`;
+        } catch (err) {
+            console.error(err);
+            document.getElementById('tableHead').innerHTML = '';
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="3" class="error">❌ Failed to load: ${err.message}</td></tr>`;
             statusSpan.innerText = 'update failed';
         }
+    }
+
+    function renderCalendar() {
+        const nameFilter = document.getElementById('nameFilter').value;
+        const { rows, dayIndices, dayNumbers } = currentData;
+        if (!rows.length) return;
+
+        // Filter rows by name
+        let filteredRows = rows;
+        if (nameFilter !== 'all') {
+            filteredRows = rows.filter(row => row[fixedColIndices.name]?.trim() === nameFilter);
+        }
+
+        // Build table header: Name, Emp No, Job Site, then day numbers
+        const thead = document.getElementById('tableHead');
+        let headerHtml = '<tr><th>Name</th><th>Employment No</th><th>Job Site</th>';
+        for (let day of dayNumbers) {
+            headerHtml += `<th>${day}</th>`;
+        }
+        headerHtml += '</tr>';
+        thead.innerHTML = headerHtml;
+
+        // Build table body
+        const tbody = document.getElementById('tableBody');
+        if (filteredRows.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3">No team members match the filter</td></tr>';
+            return;
+        }
+
+        let bodyHtml = '';
+        for (let row of filteredRows) {
+            const name = row[fixedColIndices.name] || '';
+            const emp = row[fixedColIndices.emp] || '';
+            const site = row[fixedColIndices.site] || '';
+            bodyHtml += '<tr>';
+            bodyHtml += `<td style="text-align:left; font-weight:600;">${escapeHtml(name)}</td>`;
+            bodyHtml += `<td>${escapeHtml(emp)}</td>`;
+            bodyHtml += `<td>${escapeHtml(site)}</td>`;
+            for (let idx of dayIndices) {
+                let value = (idx < row.length) ? row[idx] : '—';
+                if (!value || value.trim() === '') value = '—';
+                const isOff = value.toLowerCase().includes('off');
+                const cellClass = isOff ? 'off-cell' : 'shift-cell';
+                bodyHtml += `<td><span class="${cellClass}">${escapeHtml(value)}</span></td>`;
+            }
+            bodyHtml += '</tr>';
+        }
+        tbody.innerHTML = bodyHtml;
     }
 
     function escapeHtml(str) {
@@ -426,27 +379,32 @@
         });
     }
 
-    // Event listeners for filters
-    document.getElementById('nameFilter').addEventListener('change', (e) => {
-        currentFilters.name = e.target.value;
-        renderTable();
+    // --- Initialize month dropdown ---
+    const monthSelect = document.getElementById('monthSelect');
+    for (let month in monthSheets) {
+        monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
+    }
+    monthSelect.addEventListener('change', (e) => {
+        if (e.target.value) loadMonth(e.target.value);
     });
-    document.getElementById('dayFilter').addEventListener('change', (e) => {
-        currentFilters.day = e.target.value;
-        renderTable();
-    });
-    document.getElementById('resetFilters').addEventListener('click', () => {
+    document.getElementById('nameFilter').addEventListener('change', () => renderCalendar());
+    document.getElementById('resetBtn').addEventListener('click', () => {
         document.getElementById('nameFilter').value = 'all';
-        document.getElementById('dayFilter').value = 'all';
-        currentFilters.name = 'all';
-        currentFilters.day = 'all';
-        renderTable();
+        renderCalendar();
     });
 
-    // Initial load
-    loadSchedule();
-    // Refresh every 5 minutes
-    setInterval(loadSchedule, 300000);
+    // Load first month by default if available
+    const firstMonth = Object.keys(monthSheets)[0];
+    if (firstMonth) {
+        monthSelect.value = firstMonth;
+        loadMonth(firstMonth);
+    }
+
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+        const currentMonth = monthSelect.value;
+        if (currentMonth && monthSheets[currentMonth]) loadMonth(currentMonth);
+    }, 300000);
 </script>
 </body>
 </html>
