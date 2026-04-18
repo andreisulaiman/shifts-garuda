@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Live Team Schedule</title>
+    <title>Live Team Shift Schedule</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         .header {
             background: white;
             border-radius: 28px;
@@ -62,7 +61,6 @@
             color: #1e3a8a;
         }
 
-        /* table wrapper for responsive scroll */
         .table-wrapper {
             background: white;
             border-radius: 24px;
@@ -105,7 +103,6 @@
             background-color: #fafcff;
         }
 
-        /* shift styling */
         .shift-name {
             font-weight: 600;
             background: #eef3fa;
@@ -193,86 +190,27 @@
 </div>
 
 <script>
-    // 👇👇👇 IMPORTANT: Replace with YOUR Web App URL from Google Apps Script 👇👇👇
-    const API_URL = 'function doGet() {
-  var sheet = SpreadsheetApp.getActiveSheet();
-  var data = sheet.getDataRange().getValues();
-  
-  if (!data || data.length === 0) {
-    return ContentService.createTextOutput(JSON.stringify({"error": "No data found"}))
-          .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  var headers = data[0];
-  var schedule = [];
-  
-  // Helper function to format a cell nicely
-  function formatValue(value, columnName) {
-    // If it's a Date object (real date or time)
-    if (value instanceof Date) {
-      // Check if column is Date, Start, or End
-      var lowerCol = columnName.toLowerCase();
-      if (lowerCol === 'date') {
-        // Format as YYYY/MM/DD
-        return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy/MM/dd");
-      } else if (lowerCol === 'start' || lowerCol === 'end') {
-        // Format as HH:MM (24-hour)
-        return Utilities.formatDate(value, Session.getScriptTimeZone(), "HH:MM");
-      } else {
-        // Fallback: show full date+time
-        return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy/MM/dd HH:MM");
-      }
-    }
-    // If it's a number that looks like a date (Excel serial), convert it
-    else if (typeof value === 'number' && value > 30000 && lowerCol === 'date') {
-      // Excel serial number to Date
-      var date = new Date((value - 25569) * 86400000);
-      return Utilities.formatDate(date, Session.getScriptTimeZone(), "yyyy/MM/dd");
-    }
-    // Return everything else as is
-    return value;
-  }
-  
-  for (var i = 1; i < data.length; i++) {
-    var row = data[i];
-    var entry = {};
-    for (var j = 0; j < headers.length; j++) {
-      var colName = headers[j];
-      entry[colName] = formatValue(row[j], colName);
-    }
-    schedule.push(entry);
-  }
-
-  var result = JSON.stringify(schedule);
-  return ContentService.createTextOutput(result).setMimeType(ContentService.MimeType.JSON);
-}';   // <--- PASTE YOUR URL INSIDE THE QUOTES!
+    // 👇 Your live Google Apps Script Web App URL (already set)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw2xsSww_XPBCMZ9kGSBbgrQXqfJMUJReXFDtNo1MwuqesnLlnzELQryK6jRQkkqH1RYQ/exec';
     
-    // Function to fetch schedule and render table
     async function loadSchedule() {
         const tbody = document.getElementById('table-body');
         const lastUpdatedSpan = document.getElementById('last-updated');
         
-        // Show loading state
         tbody.innerHTML = '<tr class="loading"><td colspan="5">🔄 Refreshing schedule...</td></tr>';
         
         try {
-            // Fetch data from your Google Sheets API (the secret address)
             const response = await fetch(API_URL);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             
             const scheduleData = await response.json();
             
-            // Check if we got valid data back
             if (!scheduleData || scheduleData.length === 0) {
                 tbody.innerHTML = '<tr class="loading"><td colspan="5">📭 No shifts found. Add data to your Google Sheet.</td></tr>';
                 lastUpdatedSpan.innerText = 'no data available';
                 return;
             }
             
-            // Build the HTML table rows
             let tableRows = '';
             for (const shift of scheduleData) {
                 tableRows += `
@@ -285,21 +223,17 @@
                     </tr>
                 `;
             }
-            
             tbody.innerHTML = tableRows;
             
-            // Update the "last updated" timestamp
             const now = new Date();
             lastUpdatedSpan.innerText = `last updated: ${now.toLocaleTimeString()}`;
-            
         } catch (error) {
-            console.error('Error fetching schedule:', error);
+            console.error('Fetch error:', error);
             tbody.innerHTML = `<tr class="error"><td colspan="5">⚠️ Could not load schedule. Make sure your Google Sheet is shared correctly and the Apps Script is deployed.</td></tr>`;
             lastUpdatedSpan.innerText = 'update failed';
         }
     }
     
-    // Simple helper to prevent XSS (just in case)
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -310,11 +244,8 @@
         });
     }
     
-    // Load schedule immediately when page opens
     loadSchedule();
-    
-    // Then refresh every 5 minutes (300,000 ms) so the website stays up-to-date
-    setInterval(loadSchedule, 300000);
+    setInterval(loadSchedule, 300000); // refresh every 5 minutes
 </script>
 </body>
 </html>
