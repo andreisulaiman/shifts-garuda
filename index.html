@@ -2,57 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Team Shift Calendar – Monthly View</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Shift Calendar – Reliable</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, sans-serif;
             background: #f4f7fc;
             padding: 20px;
-            color: #1e2a3e;
         }
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
+        .container { max-width: 100%; margin: 0 auto; }
         .header {
             background: white;
             border-radius: 28px;
             padding: 24px 32px;
             margin-bottom: 28px;
-            border: 1px solid #e9eef3;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         }
         h1 {
             font-size: 1.9rem;
-            font-weight: 600;
             background: linear-gradient(135deg, #1e3c72, #2b4c7c);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 6px;
-        }
-        .sub {
-            color: #4a627a;
-            font-size: 0.95rem;
-            margin-top: 8px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .badge {
-            background: #eef2ff;
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #1e3a8a;
         }
         .filter-bar {
             background: white;
@@ -62,8 +33,6 @@
             display: flex;
             gap: 24px;
             flex-wrap: wrap;
-            align-items: flex-end;
-            border: 1px solid #e9eef3;
         }
         .filter-group {
             display: flex;
@@ -73,8 +42,6 @@
         .filter-group label {
             font-size: 0.75rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             color: #5b7a9a;
         }
         .filter-group select, .filter-group button {
@@ -82,81 +49,50 @@
             border-radius: 40px;
             border: 1px solid #dce5ef;
             background: white;
-            font-size: 0.9rem;
             cursor: pointer;
-            font-family: inherit;
-            min-width: 160px;
         }
         .filter-group button {
             background: #1e3c72;
             color: white;
             border: none;
-            font-weight: 500;
-        }
-        .filter-group button:hover {
-            background: #2b4c7c;
         }
         .calendar-wrapper {
             background: white;
             border-radius: 24px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            border: 1px solid #eef2f6;
             overflow-x: auto;
         }
         .calendar-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.8rem;
-            min-width: 600px;
         }
         .calendar-table th {
             background: #f8fafd;
             padding: 14px 10px;
             text-align: center;
-            font-weight: 600;
-            color: #1f3a5f;
             border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
         }
         .calendar-table td {
             padding: 12px 8px;
             text-align: center;
             border-bottom: 1px solid #ecf1f7;
-            vertical-align: middle;
-        }
-        .calendar-table tr:hover td {
-            background-color: #fafcff;
-        }
-        .fixed-col {
-            font-weight: 600;
-            text-align: left;
-            background-color: #fef9e6;
         }
         .shift-cell {
             background: #eef3fa;
             display: inline-block;
             padding: 4px 8px;
             border-radius: 20px;
-            font-size: 0.75rem;
-            white-space: nowrap;
         }
         .off-cell {
             color: #b91c1c;
             background: #fff0f0;
-            display: inline-block;
             padding: 4px 8px;
             border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-        .loading, .error {
-            text-align: center;
-            padding: 60px 20px;
-            font-size: 1rem;
         }
         .error {
             color: #b91c1c;
-            background: #fff5f5;
+            text-align: center;
+            padding: 40px;
         }
         footer {
             margin-top: 30px;
@@ -164,247 +100,160 @@
             font-size: 0.7rem;
             color: #6c86a3;
         }
-        @media (max-width: 640px) {
-            .calendar-table th, .calendar-table td {
-                padding: 8px 6px;
-            }
-        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <h1>📅 Team Shift Calendar</h1>
-        <div class="sub">
-            <span>🕒 Live from Google Sheets</span>
-            <span class="badge" id="last-updated">updating...</span>
-        </div>
+        <div id="lastUpdated" style="font-size:0.8rem; color:#4a627a; margin-top:8px;">updating...</div>
     </div>
-
     <div class="filter-bar">
         <div class="filter-group">
-            <label>📆 Select Month</label>
+            <label>📆 Month</label>
             <select id="monthSelect"></select>
         </div>
         <div class="filter-group">
-            <label>👤 Filter by Name</label>
-            <select id="nameFilter">
-                <option value="all">All team members</option>
-            </select>
+            <label>👤 Name</label>
+            <select id="nameFilter"><option value="all">All members</option></select>
         </div>
         <div class="filter-group">
             <label>&nbsp;</label>
-            <button id="resetBtn">Reset filters</button>
+            <button id="resetBtn">Reset</button>
         </div>
     </div>
-
     <div class="calendar-wrapper">
         <table class="calendar-table" id="calendarTable">
             <thead id="tableHead"></thead>
-            <tbody id="tableBody">
-                <tr><td colspan="3" class="loading">Select a month to load schedule</td></tr>
-            </tbody>
+            <tbody id="tableBody"><tr><td class="loading">Select a month...</td></tr></tbody>
         </table>
     </div>
-    <footer>✅ Auto-refreshes every 5 minutes · Each month is a separate sheet in Google Sheets</footer>
+    <footer>✅ Auto-refreshes every 5 minutes · No more CORS or 400 errors</footer>
 </div>
 
 <script>
-    // ============================================================
-    // 🔧 CONFIGURE YOUR MONTHS AND THEIR PUBLISHED CSV LINKS
-    // ============================================================
-    // Replace these with your actual CSV links from Google Sheets.
-    // Each link is unique per sheet (tab). Get them from:
-    // File → Share → Publish to web → [select sheet] → CSV → Publish → copy link
-    const monthSheets = {
-        "April 2026": "hhttps://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv",
-        "May 2026":   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv",
-        "June 2026":  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv"
-        // Add more months as needed
-    };
-    // ============================================================
+    // ======================== CONFIGURATION ========================
+    // 👇 REPLACE THIS WITH YOUR APPS SCRIPT WEB APP URL
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFnNTFox_u4NSLJd-wIpUsp9amVNeXSV0KG_oxEQecYUtSOhXFl5TQRIwn9q4RZwiX7A/exec';
+    
+    // List your month sheets exactly as they are named in Google Sheets
+    const MONTHS = ["April 2026", "May 2026", "June 2026", "July 2026"];
+    // ================================================================
 
-    let currentData = {
-        rows: [],           // array of arrays (each row from CSV, starting from row 2)
-        headers: [],        // column headers (first row)
-        dayIndices: [],     // column indices for date columns (D onward)
-        dayNumbers: []      // day numbers extracted from headers (e.g., 1, 2, ...)
-    };
-    let fixedColIndices = { name: 0, emp: 1, site: 2 }; // A=0, B=1, C=2
+    let currentData = { rows: [], dayIndices: [], dayNumbers: [] };
 
-    // Helper: parse CSV (handles quotes)
-    function parseCSV(csvText) {
-        const rows = [];
-        const regex = /(?:,|^)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
-        const lines = csvText.split(/\r?\n/);
-        for (let line of lines) {
-            if (line.trim() === '') continue;
-            const row = [];
-            let match;
-            regex.lastIndex = 0;
-            while ((match = regex.exec(line)) !== null) {
-                const val = match[1] !== undefined ? match[1].replace(/""/g, '"') : (match[2] || '');
-                row.push(val);
-            }
-            rows.push(row);
-        }
-        return rows;
-    }
-
-    // Extract day number from header like "Apr 1", "April 1", "1", "2026-04-01"
-    function extractDayNumber(header) {
-        const match = header.match(/\b(\d{1,2})\b/);
-        if (match) return parseInt(match[1], 10);
-        return 0;
-    }
-
-    async function loadMonth(monthKey) {
-        const url = monthSheets[monthKey];
-        if (!url) return;
-
-        const statusSpan = document.getElementById('last-updated');
-        statusSpan.innerText = 'loading...';
-
+    async function loadMonth(monthName) {
+        const statusDiv = document.getElementById('lastUpdated');
+        statusDiv.innerText = 'loading...';
         try {
-            const proxyUrl = 'https://api.allorigins.win/raw?url=';
-			const response = await fetch(proxyUrl + encodeURIComponent(url));
+            const url = `${APPS_SCRIPT_URL}?sheet=${encodeURIComponent(monthName)}`;
+            const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const csvText = await response.text();
-            const allRows = parseCSV(csvText);
-            if (allRows.length < 2) throw new Error('No data rows');
-
-            const headers = allRows[0];     // first row: headers (A1, B1, C1, D1...)
-            const dataRows = allRows.slice(1); // rows 2..end
-
-            // Identify date columns: all columns after index 2 (D onward)
+            const json = await response.json();
+            if (json.error) throw new Error(json.error);
+            
+            const headers = json.headers;
+            const rows = json.rows;
+            
+            // Columns A=0, B=1, C=2 are fixed. Date columns start at index 3.
             const dayIndices = [];
             const dayNumbers = [];
             for (let i = 3; i < headers.length; i++) {
                 const header = headers[i];
-                const dayNum = extractDayNumber(header);
+                const dayNum = parseInt(header.match(/\d+/)?.[0] || '0', 10);
                 if (dayNum > 0 && dayNum <= 31) {
                     dayIndices.push(i);
                     dayNumbers.push(dayNum);
                 }
             }
-            // Sort by day number (so columns appear as 1,2,3... not 1,10,11...)
+            // sort by day number
             const combined = dayIndices.map((idx, pos) => ({ idx, day: dayNumbers[pos] }));
             combined.sort((a,b) => a.day - b.day);
-            const sortedIndices = combined.map(c => c.idx);
-            const sortedDays = combined.map(c => c.day);
-
             currentData = {
-                rows: dataRows,
-                headers: headers,
-                dayIndices: sortedIndices,
-                dayNumbers: sortedDays
+                rows: rows,
+                dayIndices: combined.map(c => c.idx),
+                dayNumbers: combined.map(c => c.day)
             };
-
-            // Populate name filter dropdown
+            
+            // Populate name dropdown
             const nameSet = new Set();
-            for (let row of dataRows) {
-                let name = row[fixedColIndices.name]?.trim();
-                if (name) nameSet.add(name);
-            }
+            rows.forEach(row => { if (row[0]) nameSet.add(row[0].trim()); });
             const nameSelect = document.getElementById('nameFilter');
-            nameSelect.innerHTML = '<option value="all">All team members</option>';
-            [...nameSet].sort().forEach(name => {
-                nameSelect.innerHTML += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+            nameSelect.innerHTML = '<option value="all">All members</option>';
+            [...nameSet].sort().forEach(n => {
+                nameSelect.innerHTML += `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`;
             });
-
+            
             renderCalendar();
-            statusSpan.innerText = `updated: ${new Date().toLocaleTimeString()}`;
+            statusDiv.innerText = `updated: ${new Date().toLocaleTimeString()}`;
         } catch (err) {
             console.error(err);
-            document.getElementById('tableHead').innerHTML = '';
-            document.getElementById('tableBody').innerHTML = `<tr><td colspan="3" class="error">❌ Failed to load: ${err.message}</td></tr>`;
-            statusSpan.innerText = 'update failed';
+            document.getElementById('tableBody').innerHTML = `<tr><td class="error">❌ ${err.message}</td></tr>`;
+            statusDiv.innerText = 'update failed';
         }
     }
-
+    
     function renderCalendar() {
         const nameFilter = document.getElementById('nameFilter').value;
-        const { rows, dayIndices, dayNumbers } = currentData;
-        if (!rows.length) return;
-
-        // Filter rows by name
-        let filteredRows = rows;
+        let filteredRows = currentData.rows;
         if (nameFilter !== 'all') {
-            filteredRows = rows.filter(row => row[fixedColIndices.name]?.trim() === nameFilter);
+            filteredRows = filteredRows.filter(row => row[0]?.trim() === nameFilter);
         }
-
-        // Build table header: Name, Emp No, Job Site, then day numbers
+        // Build header
         const thead = document.getElementById('tableHead');
         let headerHtml = '<tr><th>Name</th><th>Employment No</th><th>Job Site</th>';
-        for (let day of dayNumbers) {
+        for (let day of currentData.dayNumbers) {
             headerHtml += `<th>${day}</th>`;
         }
         headerHtml += '</tr>';
         thead.innerHTML = headerHtml;
-
-        // Build table body
+        
+        // Build body
         const tbody = document.getElementById('tableBody');
         if (filteredRows.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3">No team members match the filter</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3">No members match filter</td></tr>';
             return;
         }
-
         let bodyHtml = '';
         for (let row of filteredRows) {
-            const name = row[fixedColIndices.name] || '';
-            const emp = row[fixedColIndices.emp] || '';
-            const site = row[fixedColIndices.site] || '';
             bodyHtml += '<tr>';
-            bodyHtml += `<td style="text-align:left; font-weight:600;">${escapeHtml(name)}</td>`;
-            bodyHtml += `<td>${escapeHtml(emp)}</td>`;
-            bodyHtml += `<td>${escapeHtml(site)}</td>`;
-            for (let idx of dayIndices) {
-                let value = (idx < row.length) ? row[idx] : '—';
-                if (!value || value.trim() === '') value = '—';
-                const isOff = value.toLowerCase().includes('off');
-                const cellClass = isOff ? 'off-cell' : 'shift-cell';
-                bodyHtml += `<td><span class="${cellClass}">${escapeHtml(value)}</span></td>`;
+            bodyHtml += `<td style="font-weight:600;">${escapeHtml(row[0] || '')}</td>`;
+            bodyHtml += `<td>${escapeHtml(row[1] || '')}</td>`;
+            bodyHtml += `<td>${escapeHtml(row[2] || '')}</td>`;
+            for (let idx of currentData.dayIndices) {
+                let val = (idx < row.length) ? row[idx] : '—';
+                if (!val || val.trim() === '') val = '—';
+                const isOff = val.toLowerCase().includes('off');
+                const cls = isOff ? 'off-cell' : 'shift-cell';
+                bodyHtml += `<td><span class="${cls}">${escapeHtml(val)}</span></td>`;
             }
             bodyHtml += '</tr>';
         }
         tbody.innerHTML = bodyHtml;
     }
-
+    
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+        return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
     }
-
-    // --- Initialize month dropdown ---
+    
+    // Populate month dropdown
     const monthSelect = document.getElementById('monthSelect');
-    for (let month in monthSheets) {
+    MONTHS.forEach(month => {
         monthSelect.innerHTML += `<option value="${month}">${month}</option>`;
-    }
-    monthSelect.addEventListener('change', (e) => {
-        if (e.target.value) loadMonth(e.target.value);
     });
+    monthSelect.addEventListener('change', (e) => loadMonth(e.target.value));
     document.getElementById('nameFilter').addEventListener('change', () => renderCalendar());
     document.getElementById('resetBtn').addEventListener('click', () => {
         document.getElementById('nameFilter').value = 'all';
         renderCalendar();
     });
-
-    // Load first month by default if available
-    const firstMonth = Object.keys(monthSheets)[0];
-    if (firstMonth) {
-        monthSelect.value = firstMonth;
-        loadMonth(firstMonth);
-    }
-
-    // Auto-refresh every 5 minutes
+    // Load first month
+    if (MONTHS.length) loadMonth(MONTHS[0]);
+    // Refresh every 5 minutes
     setInterval(() => {
-        const currentMonth = monthSelect.value;
-        if (currentMonth && monthSheets[currentMonth]) loadMonth(currentMonth);
+        const current = monthSelect.value;
+        if (current) loadMonth(current);
     }, 300000);
 </script>
 </body>
