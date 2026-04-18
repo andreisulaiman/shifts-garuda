@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garuda Team Schedule · Classy View</title>
-    <!-- Clean, classy design with soft neutrals and subtle elegance -->
+    <!-- Clean, classy design with improved readability -->
     <style>
         * {
             margin: 0;
@@ -25,7 +25,7 @@
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1400px;
             width: 100%;
             background: #ffffff;
             border-radius: 24px;
@@ -48,7 +48,7 @@
         .subhead {
             font-size: 0.95rem;
             color: #6b6b6b;
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             border-bottom: 1px solid #eae8e4;
             padding-bottom: 1.2rem;
             display: flex;
@@ -65,7 +65,38 @@
             color: #4a4a4a;
         }
 
-        /* Filter bar – minimal and airy */
+        /* Month selector row */
+        .month-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .month-selector label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #7e7b76;
+        }
+
+        .month-select {
+            padding: 0.6rem 2rem 0.6rem 1rem;
+            border: 1.5px solid #e0ddda;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            background: white;
+            color: #1e1e1e;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a5753' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 14px;
+        }
+
+        /* Filter bar */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
@@ -106,11 +137,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
-        .filter-input::placeholder {
-            color: #b2afaa;
-            font-weight: 300;
-        }
-
         .btn-reset {
             background: none;
             border: 1.5px solid #e0ddda;
@@ -131,11 +157,11 @@
             color: #1e1e1e;
         }
 
-        /* Schedule table – clean and legible */
+        /* Table wrapper with improved readability */
         .table-wrapper {
             overflow-x: auto;
             border-radius: 18px;
-            border: 1px solid #ece9e5;
+            border: 1px solid #e3dfda;
             background: white;
         }
 
@@ -152,43 +178,32 @@
             background: #faf8f6;
             font-weight: 500;
             color: #3d3a36;
-            border-bottom: 1.5px solid #e3dfda;
+            border-bottom: 2px solid #d6d0ca;
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.03em;
+            white-space: nowrap;
         }
 
         td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid #f0ede9;
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #ece7e2;
             vertical-align: top;
             color: #2b2926;
+            background-color: #ffffff;
+        }
+
+        /* Zebra striping for readability */
+        tbody tr:nth-child(even) td {
+            background-color: #fdfdfc;
+        }
+
+        tbody tr:hover td {
+            background-color: #f9f7f5;
         }
 
         tr:last-child td {
             border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background-color: #fdfdfc;
-        }
-
-        .name-cell {
-            font-weight: 500;
-            color: #1f1e1c;
-        }
-
-        .date-cell {
-            color: #4f4b47;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 6px;
-            background: #a5a09a;
         }
 
         .empty-message {
@@ -217,7 +232,6 @@
             pointer-events: none;
         }
     </style>
-    <!-- Papa Parse for clean CSV handling -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
@@ -229,8 +243,14 @@
         <div class="update-badge" id="lastUpdated">Loading data…</div>
     </div>
     <div class="subhead">
-        <span>Filter by name or select a date · clean & classy</span>
+        <span>Filter by name or date · clean & classy</span>
         <span style="font-weight: 400;">⏱️ updates from sheet</span>
+    </div>
+
+    <!-- Month selector -->
+    <div class="month-selector">
+        <label for="monthSelect">📂 Schedule Month</label>
+        <select id="monthSelect" class="month-select"></select>
     </div>
 
     <!-- Filter controls -->
@@ -250,9 +270,7 @@
     <div class="table-wrapper">
         <table id="scheduleTable">
             <thead>
-                <tr id="tableHeader">
-                    <!-- Headers will be injected from CSV -->
-                </tr>
+                <tr id="tableHeader"></tr>
             </thead>
             <tbody id="tableBody">
                 <tr><td colspan="10" class="empty-message">Loading schedule…</td></tr>
@@ -268,12 +286,20 @@
     (function() {
         "use strict";
 
-        // ---------- CONFIGURATION – YOU MUST REPLACE THIS ----------
-        // Paste your published CSV URL from Google Sheets (File > Share > Publish to web, choose CSV)
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv';
-        // -----------------------------------------------------------
+        // ---------- CONFIGURATION: ADD YOUR MONTHS HERE ----------
+        // For each month, provide a label and the published CSV URL.
+        // Example:
+        // { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv" }
+        const monthConfig = [
+            { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
+            { label: "May 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv" },
+            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv" },
+            // Add more months as needed
+        ];
+        // ---------------------------------------------------------
 
         // DOM elements
+        const monthSelect = document.getElementById('monthSelect');
         const nameInput = document.getElementById('nameFilter');
         const dateInput = document.getElementById('dateFilter');
         const resetBtn = document.getElementById('resetFilters');
@@ -283,30 +309,31 @@
         const refreshLink = document.getElementById('refreshLink');
 
         // State
-        let allRows = [];            // array of objects (each object = row, keys = column headers)
+        let allRows = [];
         let headers = [];
         let filteredRows = [];
+        let currentCsvUrl = '';
 
-        // Helper: format date nicely
-        function formatDisplayDate(dateString) {
-            if (!dateString) return '';
-            try {
-                const d = new Date(dateString);
-                if (isNaN(d.getTime())) return dateString;
-                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-            } catch (e) {
-                return dateString;
-            }
+        // --- Helper: Normalize any date-ish value to YYYY-MM-DD ---
+        function normalizeToISODate(value) {
+            if (!value) return null;
+            // If it's already a string in YYYY-MM-DD format
+            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+            // Try parsing as date
+            const d = new Date(value);
+            if (isNaN(d.getTime())) return null;
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
-        // Build table from filteredRows
+        // --- Render table ---
         function renderTable() {
             if (!headers.length) {
                 tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data yet — check your sheet</td></tr>`;
                 return;
             }
-
-            // Render header
             theadRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
 
             if (filteredRows.length === 0) {
@@ -319,31 +346,24 @@
                 html += '<tr>';
                 headers.forEach(header => {
                     let value = row[header] || '';
-                    // Detect if it's a date column (simple heuristic, you can adjust)
-                    const isDateColumn = header.toLowerCase().includes('date') || header.toLowerCase().includes('tanggal');
-                    const displayValue = isDateColumn ? formatDisplayDate(value) : value;
-                    html += `<td>${displayValue}</td>`;
+                    html += `<td>${value}</td>`;
                 });
                 html += '</tr>';
             });
             tbody.innerHTML = html;
         }
 
-        // Filter logic (case-insensitive name search, exact date match)
+        // --- Filter logic (improved date matching) ---
         function applyFilters() {
             const nameQuery = nameInput.value.trim().toLowerCase();
             const selectedDate = dateInput.value;  // YYYY-MM-DD
 
             filteredRows = allRows.filter(row => {
-                // Name filter: search across all fields? we'll target likely name columns
+                // Name filter: search across fields that likely contain names
                 let nameMatch = true;
                 if (nameQuery !== '') {
-                    // Look for a column that contains 'name' / 'nama' / 'staff'
                     const nameColumns = headers.filter(h => 
-                        h.toLowerCase().includes('name') || 
-                        h.toLowerCase().includes('nama') || 
-                        h.toLowerCase().includes('staff') ||
-                        h.toLowerCase().includes('anggota')
+                        /name|nama|staff|anggota|member/i.test(h)
                     );
                     if (nameColumns.length > 0) {
                         nameMatch = nameColumns.some(col => {
@@ -358,33 +378,16 @@
                     }
                 }
 
-                // Date filter: look for any column that has 'date' or 'tanggal'
+                // Date filter: check any column that contains a valid date
                 let dateMatch = true;
                 if (selectedDate !== '') {
-                    const dateColumns = headers.filter(h => 
-                        h.toLowerCase().includes('date') || 
-                        h.toLowerCase().includes('tanggal')
-                    );
-                    if (dateColumns.length > 0) {
-                        dateMatch = dateColumns.some(col => {
-                            const cellValue = row[col] || '';
-                            // Normalize: try to parse as date, compare YYYY-MM-DD
-                            try {
-                                const cellDate = new Date(cellValue);
-                                if (isNaN(cellDate.getTime())) return false;
-                                const yyyy = cellDate.getFullYear();
-                                const mm = String(cellDate.getMonth() + 1).padStart(2, '0');
-                                const dd = String(cellDate.getDate()).padStart(2, '0');
-                                return `${yyyy}-${mm}-${dd}` === selectedDate;
-                            } catch (e) {
-                                return false;
-                            }
-                        });
-                    } else {
-                        // No date column found, date filter has no effect
-                        dateMatch = true;
-                    }
+                    // We don't rely on column names; we test every cell for a date
+                    dateMatch = Object.values(row).some(cellValue => {
+                        const normalized = normalizeToISODate(cellValue);
+                        return normalized === selectedDate;
+                    });
                 }
+
                 return nameMatch && dateMatch;
             });
 
@@ -398,7 +401,6 @@
             lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts shown`;
         }
 
-        // Reset filters
         function resetFilters() {
             nameInput.value = '';
             dateInput.value = '';
@@ -407,26 +409,22 @@
             updateResultCount();
         }
 
-        // Load and parse CSV
-        async function loadSheetData() {
+        // --- Load data from current CSV URL ---
+        async function loadSheetData(url) {
             try {
                 tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching latest schedule…</td></tr>`;
                 lastUpdatedSpan.textContent = 'Updating…';
                 
-                const response = await fetch(csvUrl);
+                const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const csvText = await response.text();
                 
-                // Parse CSV with PapaParse
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     complete: (results) => {
                         headers = results.meta.fields || [];
-                        allRows = results.data;
-                        
-                        // Clean up: remove rows that are completely empty
-                        allRows = allRows.filter(row => 
+                        allRows = results.data.filter(row => 
                             Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
                         );
                         
@@ -439,18 +437,42 @@
                     },
                     error: (err) => {
                         console.error(err);
-                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Error parsing sheet data. Check CSV link.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Error parsing sheet data.</td></tr>`;
                         lastUpdatedSpan.textContent = 'Error loading';
                     }
                 });
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load schedule. Make sure the sheet is published and the URL is correct.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load schedule. Check the month URL.</td></tr>`;
                 lastUpdatedSpan.textContent = 'Connection failed';
             }
         }
 
-        // Debounced filter trigger
+        // --- Populate month dropdown and set initial load ---
+        function initMonthSelector() {
+            monthSelect.innerHTML = '';
+            monthConfig.forEach((month, index) => {
+                const option = document.createElement('option');
+                option.value = month.url;
+                option.textContent = month.label;
+                monthSelect.appendChild(option);
+            });
+            
+            if (monthConfig.length > 0) {
+                currentCsvUrl = monthConfig[0].url;
+                loadSheetData(currentCsvUrl);
+            } else {
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No months configured. Edit monthConfig in the code.</td></tr>`;
+            }
+
+            monthSelect.addEventListener('change', (e) => {
+                currentCsvUrl = e.target.value;
+                loadSheetData(currentCsvUrl);
+                resetFilters();  // clear filters when switching months
+            });
+        }
+
+        // --- Debounced filter triggers ---
         let filterTimeout;
         function handleFilterChange() {
             clearTimeout(filterTimeout);
@@ -459,12 +481,12 @@
             }, 200);
         }
 
-        // Manual refresh
+        // --- Manual refresh ---
         function manualRefresh() {
-            loadSheetData();
+            if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }
 
-        // Event listeners
+        // --- Event listeners ---
         nameInput.addEventListener('input', handleFilterChange);
         dateInput.addEventListener('change', handleFilterChange);
         resetBtn.addEventListener('click', resetFilters);
@@ -473,13 +495,13 @@
             manualRefresh();
         });
 
-        // Initial load
-        loadSheetData();
-
-        // Optional: refresh every 15 minutes (sheet updates propagate)
+        // --- Auto-refresh every 15 minutes ---
         setInterval(() => {
-            loadSheetData();
+            if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
+
+        // --- Start ---
+        initMonthSelector();
     })();
 </script>
 </body>
