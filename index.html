@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Live Team Schedule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f4f7fc;
+            padding: 20px;
+            color: #1e2a3e;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 28px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e9eef3;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e3c72, #2b4c7c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .sub {
+            color: #4a627a;
+            font-size: 0.95rem;
+            margin-top: 8px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            background: #eef2ff;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1e3a8a;
+        }
+
+        /* table wrapper for responsive scroll */
+        .table-wrapper {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 560px;
+        }
+
+        th {
+            background: #f8fafd;
+            padding: 16px 18px;
+            text-align: left;
+            font-weight: 600;
+            color: #1f3a5f;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #ecf1f7;
+            color: #1e2f3f;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fafcff;
+        }
+
+        /* shift styling */
+        .shift-name {
+            font-weight: 600;
+            background: #eef3fa;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
+        .time-range {
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 1rem;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #eef2f6;
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fff5f5;
+            border-color: #fed7d7;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c86a3;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            th, td {
+                padding: 10px 12px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 Team Shift Schedule</h1>
+        <div class="sub">
+            <span>🕒 Live from Google Sheets</span>
+            <span class="badge" id="last-updated">updating...</span>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Start</th>
+                    <th>End</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr class="loading">
+                    <td colspan="5">⏳ Loading shift schedule...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        ✅ Automatically reflects changes when Google Sheet is updated · Data refreshes every 5 minutes
+    </footer>
+</div>
+
+<script>
+    // 👇👇👇 IMPORTANT: Replace with YOUR Web App URL from Google Apps Script 👇👇👇
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxJx6Y2FRcJbjMFVSebhpi5LT2EaRPke5XEVQ0N0oTdxkZfI3g3qfQiI-p3qtXiQaFSoA/exec';   // <--- PASTE YOUR URL INSIDE THE QUOTES!
+    
+    // Function to fetch schedule and render table
+    async function loadSchedule() {
+        const tbody = document.getElementById('table-body');
+        const lastUpdatedSpan = document.getElementById('last-updated');
+        
+        // Show loading state
+        tbody.innerHTML = '<tr class="loading"><td colspan="5">🔄 Refreshing schedule...</td></tr>';
+        
+        try {
+            // Fetch data from your Google Sheets API (the secret address)
+            const response = await fetch(API_URL);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const scheduleData = await response.json();
+            
+            // Check if we got valid data back
+            if (!scheduleData || scheduleData.length === 0) {
+                tbody.innerHTML = '<tr class="loading"><td colspan="5">📭 No shifts found. Add data to your Google Sheet.</td></tr>';
+                lastUpdatedSpan.innerText = 'no data available';
+                return;
+            }
+            
+            // Build the HTML table rows
+            let tableRows = '';
+            for (const shift of scheduleData) {
+                tableRows += `
+                    <tr>
+                        <td><span class="shift-name">${escapeHtml(shift.Name) || ''}</span></td>
+                        <td>${escapeHtml(shift.Date) || ''}</td>
+                        <td>${escapeHtml(shift.Day) || ''}</td>
+                        <td><span class="time-range">${escapeHtml(shift.Start) || ''}</span></td>
+                        <td><span class="time-range">${escapeHtml(shift.End) || ''}</span></td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = tableRows;
+            
+            // Update the "last updated" timestamp
+            const now = new Date();
+            lastUpdatedSpan.innerText = `last updated: ${now.toLocaleTimeString()}`;
+            
+        } catch (error) {
+            console.error('Error fetching schedule:', error);
+            tbody.innerHTML = `<tr class="error"><td colspan="5">⚠️ Could not load schedule. Make sure your Google Sheet is shared correctly and the Apps Script is deployed.</td></tr>`;
+            lastUpdatedSpan.innerText = 'update failed';
+        }
+    }
+    
+    // Simple helper to prevent XSS (just in case)
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Load schedule immediately when page opens
+    loadSchedule();
+    
+    // Then refresh every 5 minutes (300,000 ms) so the website stays up-to-date
+    setInterval(loadSchedule, 300000);
+</script>
+</body>
+</html>
