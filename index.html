@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garuda Team Schedule</title>
-    <!-- Google Fonts for a refined look -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -40,7 +40,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Header section with gradient accent */
         .header-section {
             margin-bottom: 1.8rem;
             position: relative;
@@ -102,7 +101,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* Month selector - colorful */
         .month-selector {
             display: flex;
             align-items: center;
@@ -147,7 +145,6 @@
             outline: none;
         }
 
-        /* Filter bar - only name now, simpler */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
@@ -221,22 +218,30 @@
             transform: translateY(-1px);
         }
 
-        /* Table design - colorful, airy */
+        /* ----- TABLE WRAPPER WITH SCROLL ----- */
         .table-wrapper {
-            overflow-x: auto;
+            overflow: auto;
             border-radius: 24px;
             background: white;
             box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
+            max-height: 70vh;  /* Limits height so vertical scroll activates */
+            max-width: 100%;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;  /* Required for sticky with border-radius */
+            border-spacing: 0;
             font-size: 0.95rem;
             min-width: 700px;
+            position: relative;
         }
 
+        /* ----- STICKY HEADER ROW (freezes on vertical scroll) ----- */
         th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
             text-align: left;
             padding: 1.2rem 1.5rem;
             background: #f8faff;
@@ -247,6 +252,8 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
+            /* Shadow for depth when scrolled */
+            box-shadow: 0 2px 4px -2px rgba(0,0,0,0.06);
         }
 
         td {
@@ -255,9 +262,10 @@
             vertical-align: middle;
             color: #1f2937;
             background-color: #ffffff;
+            white-space: nowrap;
         }
 
-        /* Zebra striping with soft color */
+        /* Zebra striping */
         tbody tr:nth-child(even) td {
             background-color: #fbfdff;
         }
@@ -271,12 +279,48 @@
             border-bottom: none;
         }
 
-        /* First column maybe bold */
         td:first-child {
             font-weight: 500;
             color: #1e2f4b;
         }
 
+        /* ----- STICKY FIRST COLUMN (freezes on horizontal scroll) ----- */
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            background-color: inherit;
+        }
+
+        /* Ensure header first cell has correct background and higher z-index */
+        th:first-child {
+            background-color: #f8faff;
+            z-index: 15;  /* Above body sticky column and header row */
+        }
+
+        /* Right-edge shadow for sticky column */
+        th:first-child::after,
+        td:first-child::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -6px;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
+            pointer-events: none;
+        }
+
+        /* Keep zebra striping consistent for sticky column */
+        tbody tr:nth-child(even) td:first-child {
+            background-color: #fbfdff;
+        }
+        tbody tr:hover td:first-child {
+            background-color: #eef3fe;
+        }
+
+        /* Empty message */
         .empty-message {
             text-align: center;
             padding: 4rem !important;
@@ -309,7 +353,6 @@
             border-bottom-style: solid;
         }
 
-        /* Accent dot */
         .accent-dot {
             display: inline-block;
             width: 10px;
@@ -320,7 +363,6 @@
             box-shadow: 0 2px 5px rgba(107, 140, 174, 0.3);
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             body { padding: 1rem; }
             .container { padding: 1.5rem; }
@@ -328,7 +370,7 @@
             .btn-reset { margin-left: 0; }
         }
     </style>
-    <!-- Papa Parse for CSV -->
+    <!-- Papa Parse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
@@ -336,7 +378,7 @@
     <div class="header-section">
         <div class="header-top">
             <h1>
-                📋 Team Shifts
+                📋 Garuda Team Shifts
                 <span>schedule</span>
             </h1>
             <div class="update-badge" id="lastUpdated">Loading data…</div>
@@ -350,13 +392,13 @@
         </div>
     </div>
 
-    <!-- Month selector (colorful) -->
+    <!-- Month selector -->
     <div class="month-selector">
         <label for="monthSelect">📅 Month</label>
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- Filter controls (only name filter now) -->
+    <!-- Filter controls -->
     <div class="filter-panel">
         <div class="filter-group">
             <label for="nameFilter">👤 Team member</label>
@@ -390,14 +432,16 @@
         "use strict";
 
         // ---------- CONFIGURATION: ADD YOUR MONTH URLs ----------
+        // Replace the URLs below with your published CSV links from Google Sheets.
+        // Example:
+        // { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv" }
         const monthConfig = [
             { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
-            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv" },
-            { label: "July 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv" },
-            { label: "August 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
-            { label: "September 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
-            { label: "October 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
-            // Add more as needed
+            { label: "May 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv" },
+            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv" },
+            { label: "July 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
+            
+            // Add more months as needed
         ];
         // ---------------------------------------------------------
 
@@ -416,7 +460,6 @@
         let filteredRows = [];
         let currentCsvUrl = '';
 
-        // Render table
         function renderTable() {
             if (!headers.length) {
                 tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data — check your sheet</td></tr>`;
@@ -441,14 +484,12 @@
             tbody.innerHTML = html;
         }
 
-        // Name filter only
         function applyFilter() {
             const nameQuery = nameInput.value.trim().toLowerCase();
             if (nameQuery === '') {
                 filteredRows = [...allRows];
             } else {
                 filteredRows = allRows.filter(row => {
-                    // Search in columns likely to contain names
                     const nameColumns = headers.filter(h => 
                         /name|nama|staff|anggota|member/i.test(h)
                     );
@@ -458,7 +499,6 @@
                             return val.includes(nameQuery);
                         });
                     }
-                    // fallback: any field
                     return Object.values(row).some(v => 
                         (v || '').toString().toLowerCase().includes(nameQuery)
                     );
@@ -481,7 +521,6 @@
             updateResultCount();
         }
 
-        // Load CSV from URL
         async function loadSheetData(url) {
             try {
                 tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule…</td></tr>`;
@@ -519,7 +558,6 @@
             }
         }
 
-        // Initialize month dropdown
         function initMonthSelector() {
             monthSelect.innerHTML = '';
             monthConfig.forEach((month) => {
@@ -543,7 +581,6 @@
             });
         }
 
-        // Debounced filter
         let filterTimeout;
         nameInput.addEventListener('input', () => {
             clearTimeout(filterTimeout);
@@ -557,12 +594,10 @@
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         });
 
-        // Auto-refresh every 15 min
         setInterval(() => {
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
 
-        // Start
         initMonthSelector();
     })();
 </script>
