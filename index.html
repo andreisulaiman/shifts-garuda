@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garuda Team Schedule · Classy View</title>
-    <!-- Clean, classy design with improved readability -->
+    <title>Garuda Team Schedule</title>
+    <!-- Google Fonts for a refined look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,11 +16,11 @@
         }
 
         body {
-            background: #faf9f7;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #2c2b2b;
+            background: linear-gradient(145deg, #f4f2ef 0%, #e8e4df 100%);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #1e1e24;
             line-height: 1.5;
-            padding: 2rem 1.5rem;
+            padding: 2.5rem 1.5rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -27,258 +30,358 @@
         .container {
             max-width: 1400px;
             width: 100%;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.05);
-            padding: 2rem 2rem 2.5rem;
-            transition: box-shadow 0.2s ease;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 36px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 8px 18px rgba(0, 0, 0, 0.05);
+            padding: 2.2rem 2.5rem 2.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        /* Header section with gradient accent */
+        .header-section {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         h1 {
-            font-weight: 450;
-            font-size: 2.1rem;
-            letter-spacing: -0.01em;
-            color: #1e1e1e;
-            margin-bottom: 0.2rem;
+            font-weight: 600;
+            font-size: 2.5rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #2b3a67 0%, #3f5a8c 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        h1 span {
+            background: #ffffffd6;
+            padding: 6px 16px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2b3a67;
+            letter-spacing: normal;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
 
         .subhead {
-            font-size: 0.95rem;
-            color: #6b6b6b;
-            margin-bottom: 1.8rem;
-            border-bottom: 1px solid #eae8e4;
-            padding-bottom: 1.2rem;
+            font-size: 1rem;
+            color: #5a5f6e;
+            margin-top: 0.2rem;
+            border-bottom: 1.5px solid rgba(86, 101, 140, 0.15);
+            padding-bottom: 1.4rem;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
             flex-wrap: wrap;
         }
 
         .update-badge {
-            background: #f1efec;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            color: #4a4a4a;
+            background: #eef2f9;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2b3a67;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+            backdrop-filter: blur(4px);
         }
 
-        /* Month selector row */
+        /* Month selector - colorful */
         .month-selector {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+            background: #ffffffc7;
+            padding: 0.6rem 1.2rem 0.6rem 1.8rem;
+            border-radius: 80px;
+            width: fit-content;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(255,255,255,0.8);
         }
 
         .month-selector label {
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.9rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #7e7b76;
+            letter-spacing: 0.04em;
+            color: #3f5a8c;
         }
 
         .month-select {
-            padding: 0.6rem 2rem 0.6rem 1rem;
-            border: 1.5px solid #e0ddda;
-            border-radius: 40px;
-            font-size: 0.95rem;
+            padding: 0.6rem 2.4rem 0.6rem 1.2rem;
+            border: 1.5px solid #cfd9e6;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
             background: white;
-            color: #1e1e1e;
+            color: #1e1e24;
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a5753' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233f5a8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1rem center;
+            background-position: right 1.2rem center;
             background-size: 14px;
+            transition: border 0.2s, box-shadow 0.2s;
         }
 
-        /* Filter bar */
+        .month-select:hover, .month-select:focus {
+            border-color: #6b8cae;
+            box-shadow: 0 0 0 3px rgba(63, 90, 140, 0.08);
+            outline: none;
+        }
+
+        /* Filter bar - only name now, simpler */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.2rem 2rem;
-            margin-bottom: 2.5rem;
+            gap: 1.5rem 2rem;
+            margin-bottom: 2.8rem;
             align-items: flex-end;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            min-width: 200px;
+            gap: 0.5rem;
+            min-width: 260px;
+            flex: 2 1 260px;
         }
 
         .filter-group label {
-            font-size: 0.75rem;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #7e7b76;
+            letter-spacing: 0.05em;
+            color: #5a6275;
         }
 
         .filter-input {
-            padding: 0.7rem 1rem;
-            border: 1.5px solid #e0ddda;
-            border-radius: 16px;
+            padding: 0.9rem 1.2rem;
+            border: 1.8px solid #dfe3ec;
+            border-radius: 24px;
             font-size: 1rem;
             background: white;
-            transition: all 0.15s;
+            transition: all 0.2s;
             font-family: inherit;
-            color: #1e1e1e;
+            color: #1e1e24;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
         }
 
         .filter-input:focus {
             outline: none;
-            border-color: #a6a09c;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border-color: #6b8cae;
+            box-shadow: 0 4px 12px rgba(43, 58, 103, 0.08), 0 0 0 3px rgba(63, 90, 140, 0.06);
+        }
+
+        .filter-input::placeholder {
+            color: #9aa1b0;
+            font-weight: 400;
         }
 
         .btn-reset {
-            background: none;
-            border: 1.5px solid #e0ddda;
-            padding: 0.7rem 1.4rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 450;
-            color: #5a5753;
+            background: #ffffff;
+            border: 1.8px solid #dfe3ec;
+            padding: 0.9rem 1.8rem;
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-weight: 550;
+            color: #2b3a67;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.2s;
             margin-left: auto;
-            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-reset:hover {
-            background: #f5f3f1;
-            border-color: #c2bcb6;
-            color: #1e1e1e;
+            background: #f0f4fc;
+            border-color: #b1c1db;
+            color: #1f2e4a;
+            box-shadow: 0 8px 14px rgba(43, 58, 103, 0.06);
+            transform: translateY(-1px);
         }
 
-        /* Table wrapper with improved readability */
+        /* Table design - colorful, airy */
         .table-wrapper {
             overflow-x: auto;
-            border-radius: 18px;
-            border: 1px solid #e3dfda;
+            border-radius: 24px;
             background: white;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 600px;
+            min-width: 700px;
         }
 
         th {
             text-align: left;
-            padding: 1rem 1.2rem;
-            background: #faf8f6;
-            font-weight: 500;
-            color: #3d3a36;
-            border-bottom: 2px solid #d6d0ca;
+            padding: 1.2rem 1.5rem;
+            background: #f8faff;
+            font-weight: 600;
+            color: #1f2e4a;
+            border-bottom: 2px solid #ccd7e8;
             font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.05em;
             white-space: nowrap;
         }
 
         td {
-            padding: 0.9rem 1.2rem;
-            border-bottom: 1px solid #ece7e2;
-            vertical-align: top;
-            color: #2b2926;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid #eaeef4;
+            vertical-align: middle;
+            color: #1f2937;
             background-color: #ffffff;
         }
 
-        /* Zebra striping for readability */
+        /* Zebra striping with soft color */
         tbody tr:nth-child(even) td {
-            background-color: #fdfdfc;
+            background-color: #fbfdff;
         }
 
         tbody tr:hover td {
-            background-color: #f9f7f5;
+            background-color: #eef3fe;
+            transition: background 0.15s;
         }
 
         tr:last-child td {
             border-bottom: none;
         }
 
-        .empty-message {
-            text-align: center;
-            padding: 3.5rem !important;
-            color: #8d8984;
-            font-style: italic;
+        /* First column maybe bold */
+        td:first-child {
+            font-weight: 500;
+            color: #1e2f4b;
         }
 
+        .empty-message {
+            text-align: center;
+            padding: 4rem !important;
+            color: #7c879c;
+            font-style: italic;
+            font-size: 1.05rem;
+        }
+
+        /* Footer */
         .footer-note {
-            margin-top: 1.5rem;
-            font-size: 0.8rem;
-            color: #a6a19b;
-            text-align: right;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #6d7588;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
         }
 
         .footer-note a {
-            color: inherit;
+            color: #2b3a67;
             text-decoration: none;
-            border-bottom: 1px dotted #ccc;
+            font-weight: 500;
+            border-bottom: 1.5px dotted #a7b7d1;
+            padding-bottom: 2px;
         }
 
-        /* Loading state */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        .footer-note a:hover {
+            color: #1f2e4a;
+            border-bottom-style: solid;
+        }
+
+        /* Accent dot */
+        .accent-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 10px;
+            background: #6b8cae;
+            margin-right: 8px;
+            box-shadow: 0 2px 5px rgba(107, 140, 174, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .container { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            .btn-reset { margin-left: 0; }
         }
     </style>
+    <!-- Papa Parse for CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-        <h1>
-            <span>📅 Garuda Team Shifts</span>
-        </h1>
-        <div class="update-badge" id="lastUpdated">Loading data…</div>
-    </div>
-    <div class="subhead">
-        <span>Filter by name or date · clean & classy</span>
-        <span style="font-weight: 400;">⏱️ updates from sheet</span>
+    <div class="header-section">
+        <div class="header-top">
+            <h1>
+                📋 Garuda Team Shifts
+                <span>schedule</span>
+            </h1>
+            <div class="update-badge" id="lastUpdated">Loading data…</div>
+        </div>
+        <div class="subhead">
+            <div style="display: flex; align-items: center;">
+                <span class="accent-dot"></span> 
+                <span>Filter by name — select month below</span>
+            </div>
+            <span>⚡ auto‑sync from Google Sheets</span>
+        </div>
     </div>
 
-    <!-- Month selector -->
+    <!-- Month selector (colorful) -->
     <div class="month-selector">
-        <label for="monthSelect">📂 Schedule Month</label>
+        <label for="monthSelect">📅 Month</label>
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- Filter controls -->
+    <!-- Filter controls (only name filter now) -->
     <div class="filter-panel">
         <div class="filter-group">
-            <label for="nameFilter">👤 Name</label>
-            <input type="text" id="nameFilter" class="filter-input" placeholder="e.g. Andre, Siti, Budi…" autocomplete="off">
+            <label for="nameFilter">👤 Team member</label>
+            <input type="text" id="nameFilter" class="filter-input" placeholder="Type a name…" autocomplete="off">
         </div>
-        <div class="filter-group">
-            <label for="dateFilter">📆 Date</label>
-            <input type="date" id="dateFilter" class="filter-input">
-        </div>
-        <button class="btn-reset" id="resetFilters">↻ Clear filters</button>
+        <button class="btn-reset" id="resetFilters">
+            <span>↻</span> Clear filters
+        </button>
     </div>
 
-    <!-- Table display -->
+    <!-- Schedule table -->
     <div class="table-wrapper">
         <table id="scheduleTable">
             <thead>
                 <tr id="tableHeader"></tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td colspan="10" class="empty-message">Loading schedule…</td></tr>
+                <tr><td colspan="10" class="empty-message">⏳ Loading schedule…</td></tr>
             </tbody>
         </table>
     </div>
+    
     <div class="footer-note">
-        ⚡ Auto‑refreshes when Google Sheet is updated · <a href="#" id="refreshLink">refresh now</a>
+        <span>🔄 Updates every 15 min</span>
+        <a href="#" id="refreshLink">↻ Refresh now</a>
     </div>
 </div>
 
@@ -286,22 +389,17 @@
     (function() {
         "use strict";
 
-        // ---------- CONFIGURATION: ADD YOUR MONTHS HERE ----------
-        // For each month, provide a label and the published CSV URL.
-        // Example:
-        // { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?output=csv" }
+        // ---------- CONFIGURATION: ADD YOUR MONTH URLs ----------
         const monthConfig = [
-            { label: "April 2026", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
-            { label: "May 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=969043239&single=true&output=csv" },
-            { label: "June 2026",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1108356911&single=true&output=csv" },
-            // Add more months as needed
+            { label: "April 2026", url: "YOUR_APRIL_CSV_URL_HERE" },
+            { label: "May 2026",   url: "YOUR_MAY_CSV_URL_HERE" },
+            // Add more as needed
         ];
         // ---------------------------------------------------------
 
         // DOM elements
         const monthSelect = document.getElementById('monthSelect');
         const nameInput = document.getElementById('nameFilter');
-        const dateInput = document.getElementById('dateFilter');
         const resetBtn = document.getElementById('resetFilters');
         const tbody = document.getElementById('tableBody');
         const theadRow = document.getElementById('tableHeader');
@@ -314,30 +412,16 @@
         let filteredRows = [];
         let currentCsvUrl = '';
 
-        // --- Helper: Normalize any date-ish value to YYYY-MM-DD ---
-        function normalizeToISODate(value) {
-            if (!value) return null;
-            // If it's already a string in YYYY-MM-DD format
-            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-            // Try parsing as date
-            const d = new Date(value);
-            if (isNaN(d.getTime())) return null;
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // --- Render table ---
+        // Render table
         function renderTable() {
             if (!headers.length) {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data yet — check your sheet</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data — check your sheet</td></tr>`;
                 return;
             }
             theadRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
 
             if (filteredRows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No shifts match the filters</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts</td></tr>`;
                 return;
             }
 
@@ -353,44 +437,29 @@
             tbody.innerHTML = html;
         }
 
-        // --- Filter logic (improved date matching) ---
-        function applyFilters() {
+        // Name filter only
+        function applyFilter() {
             const nameQuery = nameInput.value.trim().toLowerCase();
-            const selectedDate = dateInput.value;  // YYYY-MM-DD
-
-            filteredRows = allRows.filter(row => {
-                // Name filter: search across fields that likely contain names
-                let nameMatch = true;
-                if (nameQuery !== '') {
+            if (nameQuery === '') {
+                filteredRows = [...allRows];
+            } else {
+                filteredRows = allRows.filter(row => {
+                    // Search in columns likely to contain names
                     const nameColumns = headers.filter(h => 
                         /name|nama|staff|anggota|member/i.test(h)
                     );
                     if (nameColumns.length > 0) {
-                        nameMatch = nameColumns.some(col => {
+                        return nameColumns.some(col => {
                             const val = (row[col] || '').toString().toLowerCase();
                             return val.includes(nameQuery);
                         });
-                    } else {
-                        // fallback: search all fields
-                        nameMatch = Object.values(row).some(v => 
-                            (v || '').toString().toLowerCase().includes(nameQuery)
-                        );
                     }
-                }
-
-                // Date filter: check any column that contains a valid date
-                let dateMatch = true;
-                if (selectedDate !== '') {
-                    // We don't rely on column names; we test every cell for a date
-                    dateMatch = Object.values(row).some(cellValue => {
-                        const normalized = normalizeToISODate(cellValue);
-                        return normalized === selectedDate;
-                    });
-                }
-
-                return nameMatch && dateMatch;
-            });
-
+                    // fallback: any field
+                    return Object.values(row).some(v => 
+                        (v || '').toString().toLowerCase().includes(nameQuery)
+                    );
+                });
+            }
             renderTable();
             updateResultCount();
         }
@@ -398,21 +467,20 @@
         function updateResultCount() {
             const count = filteredRows.length;
             const total = allRows.length;
-            lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts shown`;
+            lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts`;
         }
 
         function resetFilters() {
             nameInput.value = '';
-            dateInput.value = '';
             filteredRows = [...allRows];
             renderTable();
             updateResultCount();
         }
 
-        // --- Load data from current CSV URL ---
+        // Load CSV from URL
         async function loadSheetData(url) {
             try {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching latest schedule…</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule…</td></tr>`;
                 lastUpdatedSpan.textContent = 'Updating…';
                 
                 const response = await fetch(url);
@@ -427,7 +495,6 @@
                         allRows = results.data.filter(row => 
                             Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
                         );
-                        
                         filteredRows = [...allRows];
                         renderTable();
                         updateResultCount();
@@ -437,21 +504,21 @@
                     },
                     error: (err) => {
                         console.error(err);
-                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Error parsing sheet data.</td></tr>`;
-                        lastUpdatedSpan.textContent = 'Error loading';
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Parse error</td></tr>`;
+                        lastUpdatedSpan.textContent = 'Error';
                     }
                 });
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load schedule. Check the month URL.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load. Check month URL.</td></tr>`;
                 lastUpdatedSpan.textContent = 'Connection failed';
             }
         }
 
-        // --- Populate month dropdown and set initial load ---
+        // Initialize month dropdown
         function initMonthSelector() {
             monthSelect.innerHTML = '';
-            monthConfig.forEach((month, index) => {
+            monthConfig.forEach((month) => {
                 const option = document.createElement('option');
                 option.value = month.url;
                 option.textContent = month.label;
@@ -462,45 +529,36 @@
                 currentCsvUrl = monthConfig[0].url;
                 loadSheetData(currentCsvUrl);
             } else {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No months configured. Edit monthConfig in the code.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No months configured. Edit monthConfig.</td></tr>`;
             }
 
             monthSelect.addEventListener('change', (e) => {
                 currentCsvUrl = e.target.value;
                 loadSheetData(currentCsvUrl);
-                resetFilters();  // clear filters when switching months
+                resetFilters();
             });
         }
 
-        // --- Debounced filter triggers ---
+        // Debounced filter
         let filterTimeout;
-        function handleFilterChange() {
+        nameInput.addEventListener('input', () => {
             clearTimeout(filterTimeout);
-            filterTimeout = setTimeout(() => {
-                applyFilters();
-            }, 200);
-        }
-
-        // --- Manual refresh ---
-        function manualRefresh() {
-            if (currentCsvUrl) loadSheetData(currentCsvUrl);
-        }
-
-        // --- Event listeners ---
-        nameInput.addEventListener('input', handleFilterChange);
-        dateInput.addEventListener('change', handleFilterChange);
-        resetBtn.addEventListener('click', resetFilters);
-        refreshLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            manualRefresh();
+            filterTimeout = setTimeout(applyFilter, 250);
         });
 
-        // --- Auto-refresh every 15 minutes ---
+        resetBtn.addEventListener('click', resetFilters);
+        
+        refreshLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentCsvUrl) loadSheetData(currentCsvUrl);
+        });
+
+        // Auto-refresh every 15 min
         setInterval(() => {
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
 
-        // --- Start ---
+        // Start
         initMonthSelector();
     })();
 </script>
