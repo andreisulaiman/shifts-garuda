@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Team Schedule · Classy View</title>
+    <!-- Clean, classy design with soft neutrals and subtle elegance -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #faf9f7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #2c2b2b;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.05);
+            padding: 2rem 2rem 2.5rem;
+            transition: box-shadow 0.2s ease;
+        }
+
+        h1 {
+            font-weight: 450;
+            font-size: 2.1rem;
+            letter-spacing: -0.01em;
+            color: #1e1e1e;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subhead {
+            font-size: 0.95rem;
+            color: #6b6b6b;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eae8e4;
+            padding-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .update-badge {
+            background: #f1efec;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #4a4a4a;
+        }
+
+        /* Filter bar – minimal and airy */
+        .filter-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 2rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #7e7b76;
+        }
+
+        .filter-input {
+            padding: 0.7rem 1rem;
+            border: 1.5px solid #e0ddda;
+            border-radius: 16px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.15s;
+            font-family: inherit;
+            color: #1e1e1e;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #a6a09c;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .filter-input::placeholder {
+            color: #b2afaa;
+            font-weight: 300;
+        }
+
+        .btn-reset {
+            background: none;
+            border: 1.5px solid #e0ddda;
+            padding: 0.7rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 450;
+            color: #5a5753;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-left: auto;
+            background: white;
+        }
+
+        .btn-reset:hover {
+            background: #f5f3f1;
+            border-color: #c2bcb6;
+            color: #1e1e1e;
+        }
+
+        /* Schedule table – clean and legible */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid #ece9e5;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 600px;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            background: #faf8f6;
+            font-weight: 500;
+            color: #3d3a36;
+            border-bottom: 1.5px solid #e3dfda;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #f0ede9;
+            vertical-align: top;
+            color: #2b2926;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: #fdfdfc;
+        }
+
+        .name-cell {
+            font-weight: 500;
+            color: #1f1e1c;
+        }
+
+        .date-cell {
+            color: #4f4b47;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            background: #a5a09a;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3.5rem !important;
+            color: #8d8984;
+            font-style: italic;
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #a6a19b;
+            text-align: right;
+        }
+
+        .footer-note a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+    <!-- Papa Parse for clean CSV handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <h1>
+            <span>📅 Garuda Team Shifts</span>
+        </h1>
+        <div class="update-badge" id="lastUpdated">Loading data…</div>
+    </div>
+    <div class="subhead">
+        <span>Filter by name or select a date · clean & classy</span>
+        <span style="font-weight: 400;">⏱️ updates from sheet</span>
+    </div>
+
+    <!-- Filter controls -->
+    <div class="filter-panel">
+        <div class="filter-group">
+            <label for="nameFilter">👤 Name</label>
+            <input type="text" id="nameFilter" class="filter-input" placeholder="e.g. Andre, Siti, Budi…" autocomplete="off">
+        </div>
+        <div class="filter-group">
+            <label for="dateFilter">📆 Date</label>
+            <input type="date" id="dateFilter" class="filter-input">
+        </div>
+        <button class="btn-reset" id="resetFilters">↻ Clear filters</button>
+    </div>
+
+    <!-- Table display -->
+    <div class="table-wrapper">
+        <table id="scheduleTable">
+            <thead>
+                <tr id="tableHeader">
+                    <!-- Headers will be injected from CSV -->
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="10" class="empty-message">Loading schedule…</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer-note">
+        ⚡ Auto‑refreshes when Google Sheet is updated · <a href="#" id="refreshLink">refresh now</a>
+    </div>
+</div>
+
+<script>
+    (function() {
+        "use strict";
+
+        // ---------- CONFIGURATION – YOU MUST REPLACE THIS ----------
+        // Paste your published CSV URL from Google Sheets (File > Share > Publish to web, choose CSV)
+        const csvUrl = 'YOUR_CSV_URL_HERE';
+        // -----------------------------------------------------------
+
+        // DOM elements
+        const nameInput = document.getElementById('nameFilter');
+        const dateInput = document.getElementById('dateFilter');
+        const resetBtn = document.getElementById('resetFilters');
+        const tbody = document.getElementById('tableBody');
+        const theadRow = document.getElementById('tableHeader');
+        const lastUpdatedSpan = document.getElementById('lastUpdated');
+        const refreshLink = document.getElementById('refreshLink');
+
+        // State
+        let allRows = [];            // array of objects (each object = row, keys = column headers)
+        let headers = [];
+        let filteredRows = [];
+
+        // Helper: format date nicely
+        function formatDisplayDate(dateString) {
+            if (!dateString) return '';
+            try {
+                const d = new Date(dateString);
+                if (isNaN(d.getTime())) return dateString;
+                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Build table from filteredRows
+        function renderTable() {
+            if (!headers.length) {
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data yet — check your sheet</td></tr>`;
+                return;
+            }
+
+            // Render header
+            theadRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No shifts match the filters</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            filteredRows.forEach(row => {
+                html += '<tr>';
+                headers.forEach(header => {
+                    let value = row[header] || '';
+                    // Detect if it's a date column (simple heuristic, you can adjust)
+                    const isDateColumn = header.toLowerCase().includes('date') || header.toLowerCase().includes('tanggal');
+                    const displayValue = isDateColumn ? formatDisplayDate(value) : value;
+                    html += `<td>${displayValue}</td>`;
+                });
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Filter logic (case-insensitive name search, exact date match)
+        function applyFilters() {
+            const nameQuery = nameInput.value.trim().toLowerCase();
+            const selectedDate = dateInput.value;  // YYYY-MM-DD
+
+            filteredRows = allRows.filter(row => {
+                // Name filter: search across all fields? we'll target likely name columns
+                let nameMatch = true;
+                if (nameQuery !== '') {
+                    // Look for a column that contains 'name' / 'nama' / 'staff'
+                    const nameColumns = headers.filter(h => 
+                        h.toLowerCase().includes('name') || 
+                        h.toLowerCase().includes('nama') || 
+                        h.toLowerCase().includes('staff') ||
+                        h.toLowerCase().includes('anggota')
+                    );
+                    if (nameColumns.length > 0) {
+                        nameMatch = nameColumns.some(col => {
+                            const val = (row[col] || '').toString().toLowerCase();
+                            return val.includes(nameQuery);
+                        });
+                    } else {
+                        // fallback: search all fields
+                        nameMatch = Object.values(row).some(v => 
+                            (v || '').toString().toLowerCase().includes(nameQuery)
+                        );
+                    }
+                }
+
+                // Date filter: look for any column that has 'date' or 'tanggal'
+                let dateMatch = true;
+                if (selectedDate !== '') {
+                    const dateColumns = headers.filter(h => 
+                        h.toLowerCase().includes('date') || 
+                        h.toLowerCase().includes('tanggal')
+                    );
+                    if (dateColumns.length > 0) {
+                        dateMatch = dateColumns.some(col => {
+                            const cellValue = row[col] || '';
+                            // Normalize: try to parse as date, compare YYYY-MM-DD
+                            try {
+                                const cellDate = new Date(cellValue);
+                                if (isNaN(cellDate.getTime())) return false;
+                                const yyyy = cellDate.getFullYear();
+                                const mm = String(cellDate.getMonth() + 1).padStart(2, '0');
+                                const dd = String(cellDate.getDate()).padStart(2, '0');
+                                return `${yyyy}-${mm}-${dd}` === selectedDate;
+                            } catch (e) {
+                                return false;
+                            }
+                        });
+                    } else {
+                        // No date column found, date filter has no effect
+                        dateMatch = true;
+                    }
+                }
+                return nameMatch && dateMatch;
+            });
+
+            renderTable();
+            updateResultCount();
+        }
+
+        function updateResultCount() {
+            const count = filteredRows.length;
+            const total = allRows.length;
+            lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts shown`;
+        }
+
+        // Reset filters
+        function resetFilters() {
+            nameInput.value = '';
+            dateInput.value = '';
+            filteredRows = [...allRows];
+            renderTable();
+            updateResultCount();
+        }
+
+        // Load and parse CSV
+        async function loadSheetData() {
+            try {
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching latest schedule…</td></tr>`;
+                lastUpdatedSpan.textContent = 'Updating…';
+                
+                const response = await fetch(csvUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const csvText = await response.text();
+                
+                // Parse CSV with PapaParse
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        headers = results.meta.fields || [];
+                        allRows = results.data;
+                        
+                        // Clean up: remove rows that are completely empty
+                        allRows = allRows.filter(row => 
+                            Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
+                        );
+                        
+                        filteredRows = [...allRows];
+                        renderTable();
+                        updateResultCount();
+                        
+                        const now = new Date();
+                        lastUpdatedSpan.textContent = `🔄 Updated ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+                    },
+                    error: (err) => {
+                        console.error(err);
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Error parsing sheet data. Check CSV link.</td></tr>`;
+                        lastUpdatedSpan.textContent = 'Error loading';
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load schedule. Make sure the sheet is published and the URL is correct.</td></tr>`;
+                lastUpdatedSpan.textContent = 'Connection failed';
+            }
+        }
+
+        // Debounced filter trigger
+        let filterTimeout;
+        function handleFilterChange() {
+            clearTimeout(filterTimeout);
+            filterTimeout = setTimeout(() => {
+                applyFilters();
+            }, 200);
+        }
+
+        // Manual refresh
+        function manualRefresh() {
+            loadSheetData();
+        }
+
+        // Event listeners
+        nameInput.addEventListener('input', handleFilterChange);
+        dateInput.addEventListener('change', handleFilterChange);
+        resetBtn.addEventListener('click', resetFilters);
+        refreshLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            manualRefresh();
+        });
+
+        // Initial load
+        loadSheetData();
+
+        // Optional: refresh every 15 minutes (sheet updates propagate)
+        setInterval(() => {
+            loadSheetData();
+        }, 15 * 60 * 1000);
+    })();
+</script>
+</body>
+</html>
