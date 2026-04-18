@@ -2,81 +2,450 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Live Team Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Live Team Shift Schedule - with Filters</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             background: #f4f7fc;
             padding: 20px;
+            color: #1e2a3e;
         }
+
         .container {
             max-width: 1300px;
             margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 28px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid #e9eef3;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e3c72, #2b4c7c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .sub {
+            color: #4a627a;
+            font-size: 0.95rem;
+            margin-top: 8px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            background: #eef2ff;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1e3a8a;
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            border: 1px solid #e9eef3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b7a9a;
+        }
+
+        .filter-group select, .filter-group button {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid #dce5ef;
+            background: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .filter-group select {
+            min-width: 140px;
+        }
+
+        .filter-group button {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .filter-group button:hover {
+            background: #2b4c7c;
+        }
+
+        .table-wrapper {
             background: white;
             border-radius: 24px;
-            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            overflow-x: auto;
+            padding: 0;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 560px;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+
         th {
-            background: #1e3c72;
-            color: white;
+            background: #f8fafd;
+            padding: 16px 18px;
+            text-align: left;
+            font-weight: 600;
+            color: #1f3a5f;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
         }
-        .loading, .error {
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #ecf1f7;
+            color: #1e2f3f;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fafcff;
+        }
+
+        .shift-name {
+            font-weight: 600;
+            background: #eef3fa;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
+        .time-range {
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .loading, .error, .no-results {
             text-align: center;
-            padding: 40px;
+            padding: 50px 20px;
+            font-size: 1rem;
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #eef2f6;
+        }
+
+        .error {
+            color: #b91c1c;
+            background: #fff5f5;
+            border-color: #fed7d7;
+        }
+
+        .no-results {
+            color: #6c86a3;
+            background: #fafcff;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c86a3;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📋 Team Shift Schedule</h1>
-    <div id="status">Loading...</div>
-    <table id="schedule-table">
-        <thead id="table-head"></thead>
-        <tbody id="table-body"></tbody>
-    </table>
+    <div class="header">
+        <h1>📋 Team Shift Schedule</h1>
+        <div class="sub">
+            <span>🕒 Live from Google Sheets</span>
+            <span class="badge" id="last-updated">updating...</span>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>👤 Filter by Name</label>
+            <select id="nameFilter">
+                <option value="all">All names</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>📅 Filter by Day</label>
+            <select id="dayFilter">
+                <option value="all">All days</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>&nbsp;</label>
+            <button id="resetFilters">Reset filters</button>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="schedule-table">
+            <thead id="table-head">
+                <tr><th colspan="5">Loading schedule...</th></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+    <footer>
+        ✅ Automatically reflects changes when Google Sheet is updated · Data refreshes every 5 minutes
+    </footer>
 </div>
 
 <script>
-    // 👇 PASTE YOUR PUBLISHED CSV LINK HERE (from Step A)
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=0&single=true&output=csv';
-    
-    async function loadSchedule() {
-        try {
-            const response = await fetch(CSV_URL);
-            const csvText = await response.text();
-            
-            // Parse CSV
-            const rows = csvText.trim().split('\n');
-            const headers = rows[0].split(',');
-            
-            // Build table header
-            const thead = document.getElementById('table-head');
-            thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-            
-            // Build table body
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            for (let i = 1; i < rows.length; i++) {
-                const cols = rows[i].split(',');
-                const rowHtml = '<tr>' + cols.map(c => `<td>${c}</td>`).join('') + '</tr>';
-                tbody.innerHTML += rowHtml;
+    // ======================== IMPORTANT ========================
+    // 👇 REPLACE THIS WITH YOUR PUBLISHED GOOGLE SHEET CSV LINK
+    const CSV_URL = 'YOUR_PUBLISHED_CSV_URL_HERE';
+    // ============================================================
+
+    let allShifts = [];      // store all parsed shifts
+    let currentFilters = { name: 'all', day: 'all' };
+
+    // Helper: parse CSV (handles quoted fields)
+    function parseCSV(csvText) {
+        const rows = [];
+        const regex = /(?:,|^)(?:"([^"]*(?:""[^"]*)*)"|([^",]*))/g;
+        const lines = csvText.split(/\r?\n/);
+        if (lines.length === 0) return rows;
+        
+        for (let line of lines) {
+            if (line.trim() === '') continue;
+            const row = [];
+            let match;
+            let lastIndex = 0;
+            let colIndex = 0;
+            // reset regex
+            regex.lastIndex = 0;
+            while ((match = regex.exec(line)) !== null) {
+                const val = match[1] !== undefined ? match[1].replace(/""/g, '"') : (match[2] || '');
+                row.push(val);
+                lastIndex = regex.lastIndex;
+                colIndex++;
             }
-            document.getElementById('status').innerHTML = '✅ Last updated: ' + new Date().toLocaleTimeString();
+            // handle trailing empty field
+            if (lastIndex === line.length) row.push('');
+            rows.push(row);
+        }
+        return rows;
+    }
+
+    // Render table based on current filters
+    function renderTable() {
+        const thead = document.getElementById('table-head');
+        const tbody = document.getElementById('table-body');
+        
+        if (allShifts.length === 0) {
+            thead.innerHTML = '<tr><th colspan="5">No data yet</th></tr>';
+            tbody.innerHTML = '';
+            return;
+        }
+
+        // Get headers from first row of allShifts (keys)
+        const headers = Object.keys(allShifts[0]);
+        // Build header row
+        thead.innerHTML = '<tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+
+        // Apply filters
+        let filtered = [...allShifts];
+        if (currentFilters.name !== 'all') {
+            filtered = filtered.filter(shift => shift.Name === currentFilters.name);
+        }
+        if (currentFilters.day !== 'all') {
+            filtered = filtered.filter(shift => shift.Day === currentFilters.day);
+        }
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="' + headers.length + '" class="no-results">😴 No shifts match the filters. Try resetting.</td></tr>';
+            return;
+        }
+
+        // Build rows
+        let html = '';
+        for (const shift of filtered) {
+            html += '<tr>';
+            for (const header of headers) {
+                let value = shift[header] || '';
+                // Add nice styling to Name and Start/End
+                if (header === 'Name') {
+                    value = `<span class="shift-name">${escapeHtml(value)}</span>`;
+                } else if (header === 'Start' || header === 'End') {
+                    value = `<span class="time-range">${escapeHtml(value)}</span>`;
+                } else {
+                    value = escapeHtml(value);
+                }
+                html += `<td>${value}</td>`;
+            }
+            html += '</tr>';
+        }
+        tbody.innerHTML = html;
+    }
+
+    // Update dropdown options based on current data
+    function updateFilterDropdowns() {
+        const nameSet = new Set();
+        const daySet = new Set();
+        for (const shift of allShifts) {
+            if (shift.Name) nameSet.add(shift.Name);
+            if (shift.Day) daySet.add(shift.Day);
+        }
+        
+        const nameSelect = document.getElementById('nameFilter');
+        const daySelect = document.getElementById('dayFilter');
+        
+        // Preserve current selection if possible
+        const oldName = nameSelect.value;
+        const oldDay = daySelect.value;
+        
+        nameSelect.innerHTML = '<option value="all">All names</option>';
+        [...nameSet].sort().forEach(name => {
+            nameSelect.innerHTML += `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`;
+        });
+        
+        daySelect.innerHTML = '<option value="all">All days</option>';
+        [...daySet].sort().forEach(day => {
+            daySelect.innerHTML += `<option value="${escapeHtml(day)}">${escapeHtml(day)}</option>`;
+        });
+        
+        // Restore selection if still valid
+        if (oldName !== 'all' && nameSet.has(oldName)) nameSelect.value = oldName;
+        else nameSelect.value = 'all';
+        if (oldDay !== 'all' && daySet.has(oldDay)) daySelect.value = oldDay;
+        else daySelect.value = 'all';
+        
+        currentFilters.name = nameSelect.value;
+        currentFilters.day = daySelect.value;
+    }
+
+    // Load CSV from Google Sheets
+    async function loadSchedule() {
+        const statusSpan = document.getElementById('last-updated');
+        try {
+            statusSpan.innerText = 'fetching...';
+            const response = await fetch(CSV_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const csvText = await response.text();
+            const rows = parseCSV(csvText);
+            if (rows.length < 2) {
+                allShifts = [];
+                renderTable();
+                statusSpan.innerText = 'no data available';
+                return;
+            }
+            
+            const headers = rows[0];
+            const shifts = [];
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    let val = row[j] || '';
+                    // optional: trim whitespace
+                    val = val.trim();
+                    obj[headers[j]] = val;
+                }
+                shifts.push(obj);
+            }
+            allShifts = shifts;
+            
+            // Update filter dropdowns with new data
+            updateFilterDropdowns();
+            // Render with current filters (preserved)
+            renderTable();
+            
+            const now = new Date();
+            statusSpan.innerText = `last updated: ${now.toLocaleTimeString()}`;
         } catch (error) {
-            document.getElementById('status').innerHTML = '❌ Error loading schedule. Make sure your sheet is published.';
+            console.error(error);
+            document.getElementById('table-head').innerHTML = '<tr><th colspan="5">⚠️ Error</th></tr>';
+            document.getElementById('table-body').innerHTML = '<tr class="error"><td colspan="5">Failed to load schedule. Check your CSV publish link and make sure sheet is published to web.</td></tr>';
+            statusSpan.innerText = 'update failed';
         }
     }
-    
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Event listeners for filters
+    document.getElementById('nameFilter').addEventListener('change', (e) => {
+        currentFilters.name = e.target.value;
+        renderTable();
+    });
+    document.getElementById('dayFilter').addEventListener('change', (e) => {
+        currentFilters.day = e.target.value;
+        renderTable();
+    });
+    document.getElementById('resetFilters').addEventListener('click', () => {
+        document.getElementById('nameFilter').value = 'all';
+        document.getElementById('dayFilter').value = 'all';
+        currentFilters.name = 'all';
+        currentFilters.day = 'all';
+        renderTable();
+    });
+
+    // Initial load
     loadSchedule();
+    // Refresh every 5 minutes
     setInterval(loadSchedule, 300000);
 </script>
 </body>
