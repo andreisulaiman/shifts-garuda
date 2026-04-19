@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garuda Team Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Garuda Team Schedule · Multi‑Member Filter</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
             position: relative;
         }
 
-        /* ----- GOOGLE T-REX (top right) ----- */
+        /* Google T-Rex charm */
         .trex-corner {
             position: fixed;
             top: 20px;
@@ -165,20 +165,20 @@
             outline: none;
         }
 
+        /* Filter panel - multi-select redesign */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem 2rem;
-            margin-bottom: 2.8rem;
-            align-items: flex-end;
+            gap: 1.8rem;
+            margin-bottom: 2.2rem;
+            align-items: flex-start;
         }
 
         .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            min-width: 260px;
-            flex: 2 1 260px;
+            flex: 3 1 380px;
+            background: rgba(255,255,240,0.4);
+            border-radius: 28px;
+            padding: 0.2rem 0.2rem 0.8rem 0.2rem;
         }
 
         .filter-group label {
@@ -186,45 +186,119 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #5a6275;
+            color: #3f4a62;
+            display: block;
+            margin-bottom: 0.7rem;
+            margin-left: 0.5rem;
         }
 
-        /* Dropdown styling similar to month select */
-        .filter-select {
-            padding: 0.9rem 1.2rem;
-            border: 1.8px solid #dfe3ec;
-            border-radius: 24px;
-            font-size: 1rem;
+        .checkbox-group {
             background: white;
+            border-radius: 22px;
+            border: 1.8px solid #e2e7f0;
+            padding: 1rem 1.2rem;
+            max-height: 190px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem 1.2rem;
             transition: all 0.2s;
-            font-family: inherit;
-            color: #1e1e24;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a6275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1.2rem center;
-            background-size: 14px;
+            box-shadow: inset 0 1px 2px #00000004, 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .checkbox-group::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .checkbox-group::-webkit-scrollbar-track {
+            background: #f0f2f8;
+            border-radius: 10px;
+        }
+        .checkbox-group::-webkit-scrollbar-thumb {
+            background: #b9c4da;
+            border-radius: 10px;
+        }
+
+        .member-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fafcff;
+            padding: 0.45rem 1rem;
+            border-radius: 60px;
+            border: 1px solid #dee4ef;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.1s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .member-checkbox:hover {
+            background: #eef3fe;
+            border-color: #b7c4df;
+        }
+
+        .member-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2b3a67;
+            margin: 0;
             cursor: pointer;
         }
 
-        .filter-select:focus {
-            outline: none;
-            border-color: #6b8cae;
-            box-shadow: 0 4px 12px rgba(43, 58, 103, 0.08), 0 0 0 3px rgba(63, 90, 140, 0.06);
+        .member-checkbox span {
+            color: #1f2e4a;
+        }
+
+        .checkbox-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.75rem;
+            margin-left: 0.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .checkbox-actions button {
+            background: none;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #5f7396;
+            cursor: pointer;
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+            transition: 0.1s;
+            font-family: inherit;
+        }
+
+        .checkbox-actions button:hover {
+            background: #eef2fa;
+            color: #1f2e4a;
+        }
+
+        .selected-count {
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #eef2fa;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            margin-left: 0.8rem;
+            color: #2b3a67;
         }
 
         .btn-reset {
             background: #ffffff;
             border: 1.8px solid #dfe3ec;
-            padding: 0.9rem 1.8rem;
+            padding: 0.7rem 1.8rem;
             border-radius: 60px;
             font-size: 0.95rem;
             font-weight: 550;
             color: #2b3a67;
             cursor: pointer;
             transition: all 0.2s;
-            margin-left: auto;
+            margin-top: 1.8rem;
+            align-self: center;
             box-shadow: 0 2px 6px rgba(0,0,0,0.02);
             backdrop-filter: blur(4px);
             display: flex;
@@ -236,17 +310,16 @@
             background: #f0f4fc;
             border-color: #b1c1db;
             color: #1f2e4a;
-            box-shadow: 0 8px 14px rgba(43, 58, 103, 0.06);
             transform: translateY(-1px);
         }
 
-        /* ----- TABLE WRAPPER ----- */
+        /* TABLE WRAPPER */
         .table-wrapper {
             overflow: auto;
             border-radius: 24px;
             background: white;
             box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
-            max-height: 70vh;
+            max-height: 65vh;
             max-width: 100%;
         }
 
@@ -256,10 +329,8 @@
             border-spacing: 0;
             font-size: 0.95rem;
             min-width: 700px;
-            position: relative;
         }
 
-        /* STICKY HEADER */
         th {
             position: sticky;
             top: 0;
@@ -274,7 +345,6 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
-            box-shadow: 0 2px 4px -2px rgba(0,0,0,0.06);
         }
 
         td {
@@ -286,50 +356,39 @@
             white-space: nowrap;
         }
 
-        /* Zebra striping */
         tbody tr:nth-child(even) td {
             background-color: #fbfdff;
         }
-
         tbody tr:hover td {
             background-color: #eef3fe;
             transition: background 0.15s;
         }
-
         tr:last-child td {
             border-bottom: none;
         }
-
         td:first-child {
             font-weight: 500;
             color: #1e2f4b;
         }
 
-        /* ----- STICKY FIRST COLUMN (FIXED BACKGROUND) ----- */
+        /* Sticky first column */
         th:first-child,
         td:first-child {
             position: sticky;
             left: 0;
             z-index: 5;
-            /* Solid white background to prevent bleed */
             background-color: #ffffff !important;
         }
-
-        /* Header first cell background */
         th:first-child {
             background-color: #f8faff !important;
             z-index: 15;
         }
-
-        /* Override zebra striping for sticky column */
         tbody tr:nth-child(even) td:first-child {
             background-color: #fbfdff !important;
         }
         tbody tr:hover td:first-child {
             background-color: #eef3fe !important;
         }
-
-        /* Shadow on right edge of sticky column */
         th:first-child::after,
         td:first-child::after {
             content: '';
@@ -350,7 +409,6 @@
             font-size: 1.05rem;
         }
 
-        /* Footer */
         .footer-note {
             margin-top: 2rem;
             font-size: 0.85rem;
@@ -360,20 +418,18 @@
             align-items: center;
             gap: 1rem;
         }
-
         .footer-note a {
             color: #2b3a67;
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1.5px dotted #a7b7d1;
             padding-bottom: 2px;
+            cursor: pointer;
         }
-
         .footer-note a:hover {
             color: #1f2e4a;
             border-bottom-style: solid;
         }
-
         .accent-dot {
             display: inline-block;
             width: 10px;
@@ -384,30 +440,27 @@
             box-shadow: 0 2px 5px rgba(107, 140, 174, 0.3);
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             body { padding: 1rem; }
             .container { padding: 1.5rem; }
             h1 { font-size: 2rem; }
-            .btn-reset { margin-left: 0; }
-            .trex-corner { top: 10px; right: 15px; }
-            .trex-svg { width: 36px; }
+            .btn-reset { margin-top: 0.5rem; align-self: flex-start; }
+            .filter-group { flex: 1 1 100%; }
+            .member-checkbox { padding: 0.35rem 0.9rem; font-size: 0.8rem; }
         }
     </style>
-    <!-- Papa Parse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
-<!-- Google T-Rex (playful touch) -->
-<div class="trex-corner" title="Rawr!">
+<!-- Google T-Rex (playful) -->
+<div class="trex-corner" title="Garuda squad!">
     <svg class="trex-svg" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M54 14L48 8L42 14L36 8L30 14L24 8L18 14L12 8L6 14L0 20V42H6L12 48L18 42L24 48L30 42L36 48L42 42L48 48L54 42H60V20L54 14Z" fill="#4B5563"/>
         <circle cx="42" cy="24" r="3" fill="white"/>
         <circle cx="18" cy="24" r="3" fill="white"/>
         <path d="M24 36H36V42H24V36Z" fill="#2B3A67"/>
-        <!-- little ground line -->
         <line x1="0" y1="52" x2="60" y2="52" stroke="#4B5563" stroke-width="2"/>
-        <!-- tiny cactus -->
         <rect x="52" y="36" width="4" height="16" fill="#4B5563" rx="2"/>
         <rect x="50" y="40" width="8" height="4" fill="#4B5563" rx="2"/>
     </svg>
@@ -418,35 +471,41 @@
         <div class="header-top">
             <h1>
                 📋 Garuda Team Shifts
-                <span>schedule</span>
+                <span>multi‑filter</span>
             </h1>
             <div class="update-badge" id="lastUpdated">Loading data…</div>
         </div>
         <div class="subhead">
             <div style="display: flex; align-items: center;">
                 <span class="accent-dot"></span> 
-                <span>Filter by name — select month below</span>
+                <span>Select one or more members — shows shifts for any selected</span>
             </div>
-            <span>⚡ auto‑sync from Google Sheets</span>
+            <span>⚡ live from Google Sheets</span>
         </div>
     </div>
 
     <!-- Month selector -->
     <div class="month-selector">
-        <label for="monthSelect">📅 Month</label>
+        <label for="monthSelect">📅 Month / Week</label>
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- Filter controls: now dropdown for names -->
+    <!-- FILTER PANEL with multi-select checkboxes -->
     <div class="filter-panel">
         <div class="filter-group">
-            <label for="nameFilterSelect">👤 Team member</label>
-            <select id="nameFilterSelect" class="filter-select">
-                <option value="">All members</option>
-            </select>
+            <label>👥 TEAM MEMBERS (multiple)</label>
+            <div id="memberCheckboxContainer" class="checkbox-group">
+                <!-- dynamic checkboxes will be injected here -->
+                <div class="empty-message" style="padding: 0.8rem; background: none;">Loading members...</div>
+            </div>
+            <div class="checkbox-actions">
+                <button id="selectAllMembersBtn" type="button">✅ Select all</button>
+                <button id="clearAllMembersBtn" type="button">❌ Clear all</button>
+                <span id="selectedMembersBadge" class="selected-count">0 selected</span>
+            </div>
         </div>
         <button class="btn-reset" id="resetFilters">
-            <span>↻</span> Clear filters
+            <span>↻</span> Reset filters & clear selection
         </button>
     </div>
 
@@ -457,34 +516,34 @@
                 <tr id="tableHeader"></tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td colspan="10" class="empty-message">⏳ Loading schedule…</td></tr>
+                <tr><td colspan="10" class="empty-message">⏳ Loading schedule...</td></tr>
             </tbody>
         </table>
     </div>
     
     <div class="footer-note">
-        <span>🔄 Updates every 15 min</span>
+        <span>🔄 Auto-refresh every 15 min</span>
         <a href="#" id="refreshLink">↻ Refresh now</a>
     </div>
 </div>
 
 <script>
     (function() {
-        "use strict";
-
-        // ---------- CONFIGURATION: ADD YOUR MONTH URLs ----------
+        // -------- CONFIGURATION: month URLs (keep as original) --------
         const monthConfig = [
             { label: "April W1", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
             { label: "April W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=778750205&single=true&output=csv" },
             { label: "May W1",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1817531407&single=true&output=csv" },
-            { label: "May W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1403554619&single=true&output=csv" }, 
-            // Add more months as needed
+            { label: "May W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1403554619&single=true&output=csv" }
         ];
-        // ---------------------------------------------------------
+        // --------------------------------------------------------------
 
         // DOM elements
         const monthSelect = document.getElementById('monthSelect');
-        const nameFilterSelect = document.getElementById('nameFilterSelect');
+        const memberContainer = document.getElementById('memberCheckboxContainer');
+        const selectAllBtn = document.getElementById('selectAllMembersBtn');
+        const clearAllBtn = document.getElementById('clearAllMembersBtn');
+        const selectedBadge = document.getElementById('selectedMembersBadge');
         const resetBtn = document.getElementById('resetFilters');
         const tbody = document.getElementById('tableBody');
         const theadRow = document.getElementById('tableHeader');
@@ -492,90 +551,148 @@
         const refreshLink = document.getElementById('refreshLink');
 
         // State
-        let allRows = [];
+        let allRows = [];           // raw data rows (objects)
         let headers = [];
         let filteredRows = [];
         let currentCsvUrl = '';
-        let nameColumns = [];
+        let nameColumns = [];       // auto-detected name fields
+        let allUniqueNames = [];
 
-        // Extract unique names from data using detected name columns
-        function extractUniqueNames(rows) {
+        // Helper: detect name columns based on header keywords
+        function detectNameColumns() {
+            if (!headers.length) return [];
+            const candidates = headers.filter(h => 
+                /name|nama|staff|anggota|member|person|team|employ/i.test(h)
+            );
+            if (candidates.length) nameColumns = candidates;
+            else if (headers.length) nameColumns = [headers[0]];
+            else nameColumns = [];
+        }
+
+        // Extract unique names from all rows using detected name columns
+        function extractUniqueNames() {
+            const nameSet = new Set();
             if (!nameColumns.length) return [];
-            const namesSet = new Set();
-            rows.forEach(row => {
+            allRows.forEach(row => {
                 nameColumns.forEach(col => {
                     const val = row[col];
                     if (val && val.toString().trim() !== '') {
-                        namesSet.add(val.toString().trim());
+                        nameSet.add(val.toString().trim());
                     }
                 });
             });
-            return Array.from(namesSet).sort((a, b) => a.localeCompare(b));
+            return Array.from(nameSet).sort((a, b) => a.localeCompare(b));
         }
 
-        // Populate name dropdown
-        function populateNameDropdown() {
-            const uniqueNames = extractUniqueNames(allRows);
-            const currentValue = nameFilterSelect.value;
-            nameFilterSelect.innerHTML = '<option value="">All members</option>';
-            uniqueNames.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                nameFilterSelect.appendChild(option);
-            });
-            // Restore selection if possible
-            if (currentValue && uniqueNames.includes(currentValue)) {
-                nameFilterSelect.value = currentValue;
-            } else {
-                nameFilterSelect.value = '';
-            }
-        }
+        // Build checkbox UI from unique names, restore previous selection if possible (preserve across data load?)
+        let currentSelectedNames = []; // store selected names for re-population consistency
 
-        // Identify name columns
-        function detectNameColumns() {
-            nameColumns = headers.filter(h => 
-                /name|nama|staff|anggota|member|person|team/i.test(h)
-            );
-            // Fallback: if no name-like column, use first column
-            if (nameColumns.length === 0 && headers.length > 0) {
-                nameColumns = [headers[0]];
-            }
-        }
-
-        function renderTable() {
-            if (!headers.length) {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data — check your sheet</td></tr>`;
+        function rebuildCheckboxes() {
+            allUniqueNames = extractUniqueNames();
+            if (!allUniqueNames.length) {
+                memberContainer.innerHTML = `<div class="empty-message" style="padding:0.8rem;">✨ No member names found</div>`;
+                selectedBadge.textContent = `0 selected`;
                 return;
             }
-            theadRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
-
-            if (filteredRows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts</td></tr>`;
-                return;
-            }
-
+            // preserve old selected set (filter only names still present)
+            const validSelected = currentSelectedNames.filter(n => allUniqueNames.includes(n));
+            currentSelectedNames = validSelected;
+            
+            // build checkboxes
             let html = '';
-            filteredRows.forEach(row => {
-                html += '<tr>';
-                headers.forEach(header => {
-                    let value = row[header] || '';
-                    html += `<td>${value}</td>`;
-                });
-                html += '</tr>';
+            allUniqueNames.forEach(name => {
+                const checkedAttr = currentSelectedNames.includes(name) ? 'checked' : '';
+                html += `
+                    <label class="member-checkbox">
+                        <input type="checkbox" value="${escapeHtml(name)}" ${checkedAttr} class="member-check">
+                        <span>${escapeHtml(name)}</span>
+                    </label>
+                `;
             });
-            tbody.innerHTML = html;
+            memberContainer.innerHTML = html;
+            updateSelectedBadgeCount();
+            attachCheckboxEvents();
+            // apply filter after rebuilding to reflect current selection
+            applyMemberFilter();
         }
 
-        function applyFilter() {
-            const selectedName = nameFilterSelect.value;
-            if (selectedName === '') {
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+
+        function attachCheckboxEvents() {
+            const checkboxes = document.querySelectorAll('.member-check');
+            checkboxes.forEach(cb => {
+                cb.removeEventListener('change', handleCheckboxChange);
+                cb.addEventListener('change', handleCheckboxChange);
+            });
+        }
+
+        function handleCheckboxChange(e) {
+            const value = e.target.value;
+            if (e.target.checked) {
+                if (!currentSelectedNames.includes(value)) currentSelectedNames.push(value);
+            } else {
+                currentSelectedNames = currentSelectedNames.filter(n => n !== value);
+            }
+            updateSelectedBadgeCount();
+            applyMemberFilter();
+        }
+
+        function updateSelectedBadgeCount() {
+            const count = currentSelectedNames.length;
+            selectedBadge.textContent = `${count} selected`;
+        }
+
+        function selectAllMembers() {
+            currentSelectedNames = [...allUniqueNames];
+            // sync checkboxes
+            const checkboxes = document.querySelectorAll('.member-check');
+            checkboxes.forEach(cb => {
+                cb.checked = true;
+            });
+            updateSelectedBadgeCount();
+            applyMemberFilter();
+        }
+
+        function clearAllMembers() {
+            currentSelectedNames = [];
+            const checkboxes = document.querySelectorAll('.member-check');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+            });
+            updateSelectedBadgeCount();
+            applyMemberFilter();
+        }
+
+        // Core filter: show rows that match ANY selected name (across any name column)
+        function applyMemberFilter() {
+            if (!allRows.length) {
+                filteredRows = [];
+                renderTable();
+                updateResultCount();
+                return;
+            }
+            
+            if (currentSelectedNames.length === 0) {
+                // No filter: show all rows
                 filteredRows = [...allRows];
             } else {
                 filteredRows = allRows.filter(row => {
-                    return nameColumns.some(col => {
-                        const val = (row[col] || '').toString().trim();
-                        return val === selectedName;
+                    // check if row contains any selected name in any name column
+                    return currentSelectedNames.some(selectedName => {
+                        return nameColumns.some(col => {
+                            const cellValue = (row[col] || '').toString().trim();
+                            return cellValue === selectedName;
+                        });
                     });
                 });
             }
@@ -583,24 +700,45 @@
             updateResultCount();
         }
 
+        function renderTable() {
+            if (!headers.length) {
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data columns</td></tr>`;
+                return;
+            }
+            theadRow.innerHTML = headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">👀 No shifts match selected members. Try different filter.</td></tr>`;
+                return;
+            }
+            let html = '';
+            filteredRows.forEach(row => {
+                html += '<tr>';
+                headers.forEach(header => {
+                    let value = row[header] !== undefined && row[header] !== null ? row[header] : '';
+                    html += `<td>${escapeHtml(value.toString())}</td>`;
+                });
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
         function updateResultCount() {
-            const count = filteredRows.length;
             const total = allRows.length;
-            lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts`;
+            const showing = filteredRows.length;
+            lastUpdatedSpan.innerHTML = `📋 ${showing} of ${total} shifts`;
         }
 
-        function resetFilters() {
-            nameFilterSelect.value = '';
-            filteredRows = [...allRows];
-            renderTable();
-            updateResultCount();
+        function resetAllFilters() {
+            clearAllMembers();
+            // also reset any name selection
+            applyMemberFilter();
         }
 
+        // Load CSV from Google Sheets
         async function loadSheetData(url) {
             try {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule…</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule from ${monthSelect.options[monthSelect.selectedIndex]?.text || 'sheet'}...</td></tr>`;
                 lastUpdatedSpan.textContent = 'Updating…';
-                
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const csvText = await response.text();
@@ -610,69 +748,70 @@
                     skipEmptyLines: true,
                     complete: (results) => {
                         headers = results.meta.fields || [];
+                        // filter out rows that are completely empty
                         allRows = results.data.filter(row => 
-                            Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
+                            row && Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
                         );
                         
                         detectNameColumns();
-                        populateNameDropdown();
-                        
-                        filteredRows = [...allRows];
-                        renderTable();
-                        updateResultCount();
+                        // rebuild name set and checkboxes (preserve selection if possible but selection resets on month change to avoid stale)
+                        // but we want clean selection after month change: reset selected names array.
+                        currentSelectedNames = [];
+                        rebuildCheckboxes();   // will also call applyMemberFilter internally
                         
                         const now = new Date();
                         lastUpdatedSpan.textContent = `🔄 Updated ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
                     },
                     error: (err) => {
                         console.error(err);
-                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Parse error</td></tr>`;
-                        lastUpdatedSpan.textContent = 'Error';
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Parse error: ${err.message}</td></tr>`;
+                        lastUpdatedSpan.textContent = 'Parse error';
                     }
                 });
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load. Check month URL.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load sheet. Check URL or CORS.</td></tr>`;
                 lastUpdatedSpan.textContent = 'Connection failed';
             }
         }
 
         function initMonthSelector() {
             monthSelect.innerHTML = '';
-            monthConfig.forEach((month) => {
+            monthConfig.forEach((month, idx) => {
                 const option = document.createElement('option');
                 option.value = month.url;
                 option.textContent = month.label;
                 monthSelect.appendChild(option);
             });
-            
-            if (monthConfig.length > 0) {
+            if (monthConfig.length) {
                 currentCsvUrl = monthConfig[0].url;
                 loadSheetData(currentCsvUrl);
             } else {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No months configured. Edit monthConfig.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No month sources configured.</td></tr>`;
             }
-
+            
             monthSelect.addEventListener('change', (e) => {
                 currentCsvUrl = e.target.value;
+                // reset member selection on month change
+                currentSelectedNames = [];
                 loadSheetData(currentCsvUrl);
-                resetFilters();
             });
         }
 
-        // Event listeners
-        nameFilterSelect.addEventListener('change', applyFilter);
-        resetBtn.addEventListener('click', resetFilters);
-        
+        // Event listeners for buttons
+        selectAllBtn.addEventListener('click', selectAllMembers);
+        clearAllBtn.addEventListener('click', clearAllMembers);
+        resetBtn.addEventListener('click', resetAllFilters);
         refreshLink.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         });
-
+        
+        // auto-refresh every 15 minutes
         setInterval(() => {
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
-
+        
         initMonthSelector();
     })();
 </script>
