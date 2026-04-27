@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garuda Team Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Garuda Team Schedule · Compact Filter</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Papa Parse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,15 +22,14 @@
             font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #1e1e24;
             line-height: 1.5;
-            padding: 2.5rem 1.5rem;
+            padding: 2rem 1.5rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
-        /* ----- GOOGLE T-REX (top right) ----- */
+        /* Google T-Rex corner (playful) */
         .trex-corner {
             position: fixed;
             top: 20px;
@@ -42,7 +43,7 @@
             opacity: 1;
         }
         .trex-svg {
-            width: 48px;
+            width: 44px;
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
@@ -55,33 +56,31 @@
             -webkit-backdrop-filter: blur(12px);
             border-radius: 36px;
             box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 8px 18px rgba(0, 0, 0, 0.05);
-            padding: 2.2rem 2.5rem 2.8rem;
+            padding: 1.8rem 2rem 2.2rem;
             border: 1px solid rgba(255, 255, 255, 0.4);
-            transition: all 0.2s ease;
         }
 
         .header-section {
-            margin-bottom: 1.8rem;
-            position: relative;
+            margin-bottom: 1.4rem;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: flex-end;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.8rem;
+            margin-bottom: 0.4rem;
         }
 
         h1 {
             font-weight: 600;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, #2b3a67 0%, #3f5a8c 100%);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -89,9 +88,9 @@
 
         h1 span {
             background: #ffffffd6;
-            padding: 6px 16px;
+            padding: 4px 14px;
             border-radius: 60px;
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 500;
             color: #2b3a67;
             letter-spacing: normal;
@@ -99,154 +98,152 @@
         }
 
         .subhead {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #5a5f6e;
-            margin-top: 0.2rem;
             border-bottom: 1.5px solid rgba(86, 101, 140, 0.15);
-            padding-bottom: 1.4rem;
+            padding-bottom: 0.9rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .update-badge {
             background: #eef2f9;
-            padding: 0.4rem 1.2rem;
+            padding: 0.3rem 1rem;
             border-radius: 60px;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 500;
             color: #2b3a67;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
             backdrop-filter: blur(4px);
         }
 
+        /* COMPACT MONTH SELECTOR (kept consistent but slightly tighter) */
         .month-selector {
             display: flex;
             align-items: center;
-            gap: 1.2rem;
-            margin-bottom: 2rem;
+            gap: 0.9rem;
+            margin-bottom: 1.25rem;
             background: #ffffffc7;
-            padding: 0.6rem 1.2rem 0.6rem 1.8rem;
-            border-radius: 80px;
+            padding: 0.4rem 1rem 0.4rem 1.5rem;
+            border-radius: 60px;
             width: fit-content;
             backdrop-filter: blur(8px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(255,255,255,0.7);
         }
 
         .month-selector label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.03em;
             color: #3f5a8c;
         }
 
         .month-select {
-            padding: 0.6rem 2.4rem 0.6rem 1.2rem;
+            padding: 0.45rem 2rem 0.45rem 1rem;
             border: 1.5px solid #cfd9e6;
-            border-radius: 60px;
-            font-size: 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
             font-weight: 500;
             background: white;
             color: #1e1e24;
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233f5a8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233f5a8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1.2rem center;
-            background-size: 14px;
+            background-position: right 1rem center;
+            background-size: 12px;
             transition: border 0.2s, box-shadow 0.2s;
         }
 
         .month-select:hover, .month-select:focus {
             border-color: #6b8cae;
-            box-shadow: 0 0 0 3px rgba(63, 90, 140, 0.08);
             outline: none;
         }
 
+        /* --- COMPACT FILTER PANEL: name filter fully compact --- */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem 2rem;
-            margin-bottom: 2.8rem;
+            gap: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
             align-items: flex-end;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            min-width: 260px;
-            flex: 2 1 260px;
+            gap: 0.3rem;
+            min-width: 190px;
+            flex: 1 1 200px;
         }
 
         .filter-group label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #5a6275;
+            letter-spacing: 0.03em;
+            color: #4f5a72;
         }
 
-        /* Dropdown styling similar to month select */
+        /* COMPACT DROPDOWN — main target for "more compact" */
         .filter-select {
-            padding: 0.9rem 1.2rem;
-            border: 1.8px solid #dfe3ec;
-            border-radius: 24px;
-            font-size: 1rem;
+            padding: 0.45rem 1.6rem 0.45rem 0.9rem;
+            border: 1.5px solid #dfe3ec;
+            border-radius: 32px;
+            font-size: 0.85rem;
+            font-weight: 450;
             background: white;
-            transition: all 0.2s;
             font-family: inherit;
-            color: #1e1e24;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+            color: #1a2636;
+            transition: all 0.2s ease;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235a6275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 1.2rem center;
-            background-size: 14px;
+            background-position: right 0.8rem center;
+            background-size: 12px;
             cursor: pointer;
         }
 
         .filter-select:focus {
             outline: none;
             border-color: #6b8cae;
-            box-shadow: 0 4px 12px rgba(43, 58, 103, 0.08), 0 0 0 3px rgba(63, 90, 140, 0.06);
+            box-shadow: 0 2px 8px rgba(43, 58, 103, 0.06);
         }
 
+        /* COMPACT RESET BUTTON */
         .btn-reset {
             background: #ffffff;
-            border: 1.8px solid #dfe3ec;
-            padding: 0.9rem 1.8rem;
-            border-radius: 60px;
-            font-size: 0.95rem;
+            border: 1.5px solid #dfe3ec;
+            padding: 0.45rem 1.2rem;
+            border-radius: 32px;
+            font-size: 0.8rem;
             font-weight: 550;
             color: #2b3a67;
             cursor: pointer;
             transition: all 0.2s;
-            margin-left: auto;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            backdrop-filter: blur(4px);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            backdrop-filter: blur(2px);
         }
 
         .btn-reset:hover {
             background: #f0f4fc;
             border-color: #b1c1db;
-            color: #1f2e4a;
-            box-shadow: 0 8px 14px rgba(43, 58, 103, 0.06);
             transform: translateY(-1px);
         }
 
-        /* ----- TABLE WRAPPER ----- */
+        /* Table wrapper & sticky styles — remain clean and robust */
         .table-wrapper {
             overflow: auto;
             border-radius: 24px;
             background: white;
             box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0,0,0,0.02);
-            max-height: 70vh;
+            max-height: 68vh;
             max-width: 100%;
         }
 
@@ -254,31 +251,28 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            font-size: 0.95rem;
-            min-width: 700px;
-            position: relative;
+            font-size: 0.9rem;
+            min-width: 680px;
         }
 
-        /* STICKY HEADER */
         th {
             position: sticky;
             top: 0;
             z-index: 10;
             text-align: left;
-            padding: 1.2rem 1.5rem;
+            padding: 1rem 1.2rem;
             background: #f8faff;
             font-weight: 600;
             color: #1f2e4a;
             border-bottom: 2px solid #ccd7e8;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             white-space: nowrap;
-            box-shadow: 0 2px 4px -2px rgba(0,0,0,0.06);
         }
 
         td {
-            padding: 1.1rem 1.5rem;
+            padding: 0.9rem 1.2rem;
             border-bottom: 1px solid #eaeef4;
             vertical-align: middle;
             color: #1f2937;
@@ -286,42 +280,29 @@
             white-space: nowrap;
         }
 
-        /* Zebra striping */
         tbody tr:nth-child(even) td {
             background-color: #fbfdff;
         }
 
         tbody tr:hover td {
             background-color: #eef3fe;
-            transition: background 0.15s;
+            transition: background 0.12s;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        td:first-child {
-            font-weight: 500;
-            color: #1e2f4b;
-        }
-
-        /* ----- STICKY FIRST COLUMN (FIXED BACKGROUND) ----- */
+        /* sticky first column (index 0) — solid background override */
         th:first-child,
         td:first-child {
             position: sticky;
             left: 0;
             z-index: 5;
-            /* Solid white background to prevent bleed */
             background-color: #ffffff !important;
         }
 
-        /* Header first cell background */
         th:first-child {
             background-color: #f8faff !important;
             z-index: 15;
         }
 
-        /* Override zebra striping for sticky column */
         tbody tr:nth-child(even) td:first-child {
             background-color: #fbfdff !important;
         }
@@ -329,7 +310,7 @@
             background-color: #eef3fe !important;
         }
 
-        /* Shadow on right edge of sticky column */
+        /* subtle shadow for sticky column */
         th:first-child::after,
         td:first-child::after {
             content: '';
@@ -338,27 +319,25 @@
             right: -6px;
             width: 6px;
             height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
+            background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
             pointer-events: none;
         }
 
         .empty-message {
             text-align: center;
-            padding: 4rem !important;
+            padding: 3rem !important;
             color: #7c879c;
             font-style: italic;
-            font-size: 1.05rem;
         }
 
-        /* Footer */
         .footer-note {
-            margin-top: 2rem;
-            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
             color: #6d7588;
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .footer-note a {
@@ -376,38 +355,35 @@
 
         .accent-dot {
             display: inline-block;
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 10px;
             background: #6b8cae;
-            margin-right: 8px;
-            box-shadow: 0 2px 5px rgba(107, 140, 174, 0.3);
+            margin-right: 6px;
+            box-shadow: 0 2px 5px rgba(107, 140, 174, 0.2);
         }
 
         @media (max-width: 600px) {
             body { padding: 1rem; }
-            .container { padding: 1.5rem; }
-            h1 { font-size: 2rem; }
+            .container { padding: 1.2rem; }
+            h1 { font-size: 1.7rem; }
             .btn-reset { margin-left: 0; }
-            .trex-corner { top: 10px; right: 15px; }
-            .trex-svg { width: 36px; }
+            .trex-corner { top: 10px; right: 12px; }
+            .trex-svg { width: 34px; }
+            .filter-group { min-width: 100%; }
         }
     </style>
-    <!-- Papa Parse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
-<!-- Google T-Rex (playful touch) -->
-<div class="trex-corner" title="Rawr!">
+<!-- Playful T-Rex -->
+<div class="trex-corner" title="Garuda team goes rawr!">
     <svg class="trex-svg" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M54 14L48 8L42 14L36 8L30 14L24 8L18 14L12 8L6 14L0 20V42H6L12 48L18 42L24 48L30 42L36 48L42 42L48 48L54 42H60V20L54 14Z" fill="#4B5563"/>
         <circle cx="42" cy="24" r="3" fill="white"/>
         <circle cx="18" cy="24" r="3" fill="white"/>
         <path d="M24 36H36V42H24V36Z" fill="#2B3A67"/>
-        <!-- little ground line -->
         <line x1="0" y1="52" x2="60" y2="52" stroke="#4B5563" stroke-width="2"/>
-        <!-- tiny cactus -->
         <rect x="52" y="36" width="4" height="16" fill="#4B5563" rx="2"/>
         <rect x="50" y="40" width="8" height="4" fill="#4B5563" rx="2"/>
     </svg>
@@ -425,19 +401,19 @@
         <div class="subhead">
             <div style="display: flex; align-items: center;">
                 <span class="accent-dot"></span> 
-                <span>Filter by name — select month below</span>
+                <span>Filter by name &nbsp;•&nbsp; Month selector</span>
             </div>
-            <span>⚡ auto‑sync from Google Sheets</span>
+            <span>⚡ live sync from Sheets</span>
         </div>
     </div>
 
     <!-- Month selector -->
     <div class="month-selector">
-        <label for="monthSelect">📅 Month</label>
+        <label for="monthSelect">📅 Month / Week</label>
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- Filter controls: now dropdown for names -->
+    <!-- COMPACT FILTER PANEL (name filter is tighter) -->
     <div class="filter-panel">
         <div class="filter-group">
             <label for="nameFilterSelect">👤 Team member</label>
@@ -450,7 +426,7 @@
         </button>
     </div>
 
-    <!-- Schedule table -->
+    <!-- Schedule table with sticky header & first column -->
     <div class="table-wrapper">
         <table id="scheduleTable">
             <thead>
@@ -463,7 +439,7 @@
     </div>
     
     <div class="footer-note">
-        <span>🔄 Updates every 15 min</span>
+        <span>🔄 Auto‑refresh every 15 min</span>
         <a href="#" id="refreshLink">↻ Refresh now</a>
     </div>
 </div>
@@ -472,13 +448,12 @@
     (function() {
         "use strict";
 
-        // ---------- CONFIGURATION: ADD YOUR MONTH URLs ----------
+        // ---------- CONFIGURATION: ADD YOUR SHEETS CSV URLs (monthly/weekly) ----------
         const monthConfig = [
             { label: "April W1", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
             { label: "April W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=778750205&single=true&output=csv" },
             { label: "May W1",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1817531407&single=true&output=csv" },
-            { label: "May W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1403554619&single=true&output=csv" }, 
-            // Add more months as needed
+            { label: "May W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1403554619&single=true&output=csv" }
         ];
         // ---------------------------------------------------------
 
@@ -498,7 +473,7 @@
         let currentCsvUrl = '';
         let nameColumns = [];
 
-        // Extract unique names from data using detected name columns
+        // Extract unique names based on auto-detected name columns
         function extractUniqueNames(rows) {
             if (!nameColumns.length) return [];
             const namesSet = new Set();
@@ -513,45 +488,44 @@
             return Array.from(namesSet).sort((a, b) => a.localeCompare(b));
         }
 
-        // Populate name dropdown
+        // Populate the compact name dropdown
         function populateNameDropdown() {
             const uniqueNames = extractUniqueNames(allRows);
-            const currentValue = nameFilterSelect.value;
-            nameFilterSelect.innerHTML = '<option value="">All members</option>';
+            const previousValue = nameFilterSelect.value;
+            nameFilterSelect.innerHTML = '<option value="">✨ All members</option>';
             uniqueNames.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
                 option.textContent = name;
                 nameFilterSelect.appendChild(option);
             });
-            // Restore selection if possible
-            if (currentValue && uniqueNames.includes(currentValue)) {
-                nameFilterSelect.value = currentValue;
+            if (previousValue && uniqueNames.includes(previousValue)) {
+                nameFilterSelect.value = previousValue;
             } else {
                 nameFilterSelect.value = '';
             }
         }
 
-        // Identify name columns
+        // Identify name-related columns (intelligent fallback)
         function detectNameColumns() {
             nameColumns = headers.filter(h => 
-                /name|nama|staff|anggota|member|person|team/i.test(h)
+                /name|nama|staff|anggota|member|person|team|shift member/i.test(h)
             );
-            // Fallback: if no name-like column, use first column
             if (nameColumns.length === 0 && headers.length > 0) {
                 nameColumns = [headers[0]];
             }
         }
 
+        // Render table with current filteredRows
         function renderTable() {
             if (!headers.length) {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">No data — check your sheet</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No headers — check sheet link</td></tr>`;
                 return;
             }
-            theadRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+            theadRow.innerHTML = headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
 
             if (filteredRows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts — try another member or month</td></tr>`;
                 return;
             }
 
@@ -559,14 +533,28 @@
             filteredRows.forEach(row => {
                 html += '<tr>';
                 headers.forEach(header => {
-                    let value = row[header] || '';
-                    html += `<td>${value}</td>`;
+                    let value = row[header] !== undefined && row[header] !== null ? row[header] : '';
+                    html += `<td>${escapeHtml(value.toString())}</td>`;
                 });
                 html += '</tr>';
             });
             tbody.innerHTML = html;
         }
 
+        // Helper to avoid XSS (just in case)
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+
+        // Apply filter based on selected name
         function applyFilter() {
             const selectedName = nameFilterSelect.value;
             if (selectedName === '') {
@@ -586,7 +574,7 @@
         function updateResultCount() {
             const count = filteredRows.length;
             const total = allRows.length;
-            lastUpdatedSpan.textContent = `📋 ${count} of ${total} shifts`;
+            lastUpdatedSpan.textContent = `📋 ${count} of ${total} entries`;
         }
 
         function resetFilters() {
@@ -596,10 +584,11 @@
             updateResultCount();
         }
 
+        // Load CSV from Google Sheets public link using PapaParse
         async function loadSheetData(url) {
             try {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule…</td></tr>`;
-                lastUpdatedSpan.textContent = 'Updating…';
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule from sheet...</td></tr>`;
+                lastUpdatedSpan.textContent = '⟳ Updating...';
                 
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -622,24 +611,25 @@
                         updateResultCount();
                         
                         const now = new Date();
-                        lastUpdatedSpan.textContent = `🔄 Updated ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+                        lastUpdatedSpan.textContent = `🕘 ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} · ${allRows.length} rows`;
                     },
                     error: (err) => {
                         console.error(err);
-                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Parse error</td></tr>`;
-                        lastUpdatedSpan.textContent = 'Error';
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ CSV parse error — check sheet format</td></tr>`;
+                        lastUpdatedSpan.textContent = 'Parse error';
                     }
                 });
             } catch (error) {
                 console.error(error);
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Could not load. Check month URL.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Failed to load data. Verify sheet URL & public access.</td></tr>`;
                 lastUpdatedSpan.textContent = 'Connection failed';
             }
         }
 
+        // Initialize month dropdown & set default
         function initMonthSelector() {
             monthSelect.innerHTML = '';
-            monthConfig.forEach((month) => {
+            monthConfig.forEach((month, idx) => {
                 const option = document.createElement('option');
                 option.value = month.url;
                 option.textContent = month.label;
@@ -650,17 +640,18 @@
                 currentCsvUrl = monthConfig[0].url;
                 loadSheetData(currentCsvUrl);
             } else {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No months configured. Edit monthConfig.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No month URLs configured. Edit 'monthConfig'.</td></tr>`;
             }
 
             monthSelect.addEventListener('change', (e) => {
                 currentCsvUrl = e.target.value;
                 loadSheetData(currentCsvUrl);
-                resetFilters();
+                // Reset name filter after month change to avoid stale filter
+                nameFilterSelect.value = '';
             });
         }
 
-        // Event listeners
+        // Event wiring
         nameFilterSelect.addEventListener('change', applyFilter);
         resetBtn.addEventListener('click', resetFilters);
         
@@ -669,6 +660,7 @@
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         });
 
+        // Auto-refresh every 15 minutes
         setInterval(() => {
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
