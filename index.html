@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Garuda Team Schedule · Compact Filter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garuda Team · Compare Shifts</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <!-- Papa Parse -->
+    <!-- PapaParse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
@@ -29,7 +29,7 @@
             align-items: center;
         }
 
-        /* Google T-Rex corner (playful) */
+        /* Google T-Rex corner */
         .trex-corner {
             position: fixed;
             top: 20px;
@@ -39,9 +39,7 @@
             transition: opacity 0.2s;
             pointer-events: none;
         }
-        .trex-corner:hover {
-            opacity: 1;
-        }
+        .trex-corner:hover { opacity: 1; }
         .trex-svg {
             width: 44px;
             height: auto;
@@ -53,17 +51,13 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 36px;
             box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.15), 0 8px 18px rgba(0, 0, 0, 0.05);
             padding: 1.8rem 2rem 2.2rem;
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .header-section {
-            margin-bottom: 1.4rem;
-        }
-
+        .header-section { margin-bottom: 1.4rem; }
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -72,7 +66,6 @@
             gap: 0.8rem;
             margin-bottom: 0.4rem;
         }
-
         h1 {
             font-weight: 600;
             font-size: 2.2rem;
@@ -85,7 +78,6 @@
             align-items: center;
             gap: 10px;
         }
-
         h1 span {
             background: #ffffffd6;
             padding: 4px 14px;
@@ -93,10 +85,7 @@
             font-size: 0.85rem;
             font-weight: 500;
             color: #2b3a67;
-            letter-spacing: normal;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
         }
-
         .subhead {
             font-size: 0.9rem;
             color: #5a5f6e;
@@ -108,7 +97,6 @@
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
         .update-badge {
             background: #eef2f9;
             padding: 0.3rem 1rem;
@@ -118,8 +106,6 @@
             color: #2b3a67;
             backdrop-filter: blur(4px);
         }
-
-        /* COMPACT MONTH SELECTOR (kept consistent but slightly tighter) */
         .month-selector {
             display: flex;
             align-items: center;
@@ -132,7 +118,6 @@
             backdrop-filter: blur(8px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(255,255,255,0.7);
         }
-
         .month-selector label {
             font-size: 0.8rem;
             font-weight: 600;
@@ -140,7 +125,6 @@
             letter-spacing: 0.03em;
             color: #3f5a8c;
         }
-
         .month-select {
             padding: 0.45rem 2rem 0.45rem 1rem;
             border: 1.5px solid #cfd9e6;
@@ -148,72 +132,138 @@
             font-size: 0.85rem;
             font-weight: 500;
             background: white;
-            color: #1e1e24;
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233f5a8c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 1rem center;
             background-size: 12px;
-            transition: border 0.2s, box-shadow 0.2s;
         }
+        .month-select:hover, .month-select:focus { border-color: #6b8cae; outline: none; }
 
-        .month-select:hover, .month-select:focus {
-            border-color: #6b8cae;
-            outline: none;
-        }
-
-        /* --- COMPACT FILTER PANEL: name filter fully compact --- */
+        /* COMPACT MULTI-SELECT (compare checklist) */
         .filter-panel {
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem 1.5rem;
             margin-bottom: 1.5rem;
-            align-items: flex-end;
+            align-items: center;
         }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            min-width: 190px;
-            flex: 1 1 200px;
+        .multi-select-group {
+            position: relative;
+            min-width: 240px;
+            flex: 1 1 auto;
         }
-
-        .filter-group label {
+        .multi-select-group label {
+            display: block;
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.03em;
             color: #4f5a72;
+            margin-bottom: 0.25rem;
         }
-
-        /* COMPACT DROPDOWN — main target for "more compact" */
-        .filter-select {
-            padding: 0.45rem 1.6rem 0.45rem 0.9rem;
+        .multi-select-trigger {
+            background: white;
             border: 1.5px solid #dfe3ec;
             border-radius: 32px;
+            padding: 0.45rem 2rem 0.45rem 1rem;
             font-size: 0.85rem;
             font-weight: 450;
-            background: white;
-            font-family: inherit;
             color: #1a2636;
-            transition: all 0.2s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6275' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.8rem center;
-            background-size: 12px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            position: relative;
+            user-select: none;
+            backdrop-filter: blur(2px);
         }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: #6b8cae;
-            box-shadow: 0 2px 8px rgba(43, 58, 103, 0.06);
+        .multi-select-trigger:hover {
+            border-color: #b1c1db;
+            background: #fefefe;
         }
-
-        /* COMPACT RESET BUTTON */
+        .trigger-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+        .trigger-arrow {
+            font-size: 0.7rem;
+            color: #5a6275;
+            transition: transform 0.2s;
+        }
+        .multi-select-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0,0,0,0.02);
+            z-index: 50;
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 0.6rem 0.2rem 0.6rem 0;
+            display: none;
+            backdrop-filter: blur(0);
+        }
+        .multi-select-dropdown.show {
+            display: block;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.1s;
+        }
+        .check-item:hover {
+            background: #eef3fe;
+        }
+        .check-item input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #3f5a8c;
+            margin: 0;
+        }
+        .check-item label {
+            flex: 1;
+            cursor: pointer;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 0.85rem;
+            color: #1e2f4b;
+            margin-bottom: 0;
+        }
+        .dropdown-actions {
+            display: flex;
+            gap: 12px;
+            padding: 0.6rem 1rem;
+            border-top: 1px solid #eaeef4;
+            margin-top: 4px;
+            background: #fafcff;
+            border-radius: 0 0 20px 20px;
+        }
+        .dropdown-actions button {
+            background: transparent;
+            border: none;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #3f5a8c;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 30px;
+        }
+        .dropdown-actions button:hover {
+            background: #e6edf6;
+        }
         .btn-reset {
             background: #ffffff;
             border: 1.5px solid #dfe3ec;
@@ -223,21 +273,18 @@
             font-weight: 550;
             color: #2b3a67;
             cursor: pointer;
-            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            backdrop-filter: blur(2px);
+            transition: all 0.2s;
         }
-
         .btn-reset:hover {
             background: #f0f4fc;
             border-color: #b1c1db;
             transform: translateY(-1px);
         }
 
-        /* Table wrapper & sticky styles — remain clean and robust */
+        /* Table styles (kept robust) */
         .table-wrapper {
             overflow: auto;
             border-radius: 24px;
@@ -246,7 +293,6 @@
             max-height: 68vh;
             max-width: 100%;
         }
-
         table {
             width: 100%;
             border-collapse: separate;
@@ -254,7 +300,6 @@
             font-size: 0.9rem;
             min-width: 680px;
         }
-
         th {
             position: sticky;
             top: 0;
@@ -270,49 +315,24 @@
             letter-spacing: 0.05em;
             white-space: nowrap;
         }
-
         td {
             padding: 0.9rem 1.2rem;
             border-bottom: 1px solid #eaeef4;
-            vertical-align: middle;
-            color: #1f2937;
             background-color: #ffffff;
             white-space: nowrap;
         }
-
-        tbody tr:nth-child(even) td {
-            background-color: #fbfdff;
-        }
-
-        tbody tr:hover td {
-            background-color: #eef3fe;
-            transition: background 0.12s;
-        }
-
-        /* sticky first column (index 0) — solid background override */
-        th:first-child,
-        td:first-child {
+        tbody tr:nth-child(even) td { background-color: #fbfdff; }
+        tbody tr:hover td { background-color: #eef3fe; transition: background 0.12s; }
+        th:first-child, td:first-child {
             position: sticky;
             left: 0;
             z-index: 5;
             background-color: #ffffff !important;
         }
-
-        th:first-child {
-            background-color: #f8faff !important;
-            z-index: 15;
-        }
-
-        tbody tr:nth-child(even) td:first-child {
-            background-color: #fbfdff !important;
-        }
-        tbody tr:hover td:first-child {
-            background-color: #eef3fe !important;
-        }
-
-        /* subtle shadow for sticky column */
-        th:first-child::after,
-        td:first-child::after {
+        th:first-child { background-color: #f8faff !important; z-index: 15; }
+        tbody tr:nth-child(even) td:first-child { background-color: #fbfdff !important; }
+        tbody tr:hover td:first-child { background-color: #eef3fe !important; }
+        th:first-child::after, td:first-child::after {
             content: '';
             position: absolute;
             top: 0;
@@ -322,14 +342,12 @@
             background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
             pointer-events: none;
         }
-
         .empty-message {
             text-align: center;
             padding: 3rem !important;
             color: #7c879c;
             font-style: italic;
         }
-
         .footer-note {
             margin-top: 1.5rem;
             font-size: 0.8rem;
@@ -339,20 +357,12 @@
             align-items: center;
             gap: 1.2rem;
         }
-
         .footer-note a {
             color: #2b3a67;
             text-decoration: none;
             font-weight: 500;
             border-bottom: 1.5px dotted #a7b7d1;
-            padding-bottom: 2px;
         }
-
-        .footer-note a:hover {
-            color: #1f2e4a;
-            border-bottom-style: solid;
-        }
-
         .accent-dot {
             display: inline-block;
             width: 9px;
@@ -360,25 +370,19 @@
             border-radius: 10px;
             background: #6b8cae;
             margin-right: 6px;
-            box-shadow: 0 2px 5px rgba(107, 140, 174, 0.2);
         }
-
         @media (max-width: 600px) {
             body { padding: 1rem; }
             .container { padding: 1.2rem; }
             h1 { font-size: 1.7rem; }
-            .btn-reset { margin-left: 0; }
-            .trex-corner { top: 10px; right: 12px; }
-            .trex-svg { width: 34px; }
-            .filter-group { min-width: 100%; }
+            .multi-select-group { min-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<!-- Playful T-Rex -->
-<div class="trex-corner" title="Garuda team goes rawr!">
-    <svg class="trex-svg" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+<div class="trex-corner" title="Compare team shifts">
+    <svg class="trex-svg" viewBox="0 0 60 54" fill="none">
         <path d="M54 14L48 8L42 14L36 8L30 14L24 8L18 14L12 8L6 14L0 20V42H6L12 48L18 42L24 48L30 42L36 48L42 42L48 48L54 42H60V20L54 14Z" fill="#4B5563"/>
         <circle cx="42" cy="24" r="3" fill="white"/>
         <circle cx="18" cy="24" r="3" fill="white"/>
@@ -392,18 +396,12 @@
 <div class="container">
     <div class="header-section">
         <div class="header-top">
-            <h1>
-                📋 Garuda Team Shifts
-                <span>schedule</span>
-            </h1>
-            <div class="update-badge" id="lastUpdated">Loading data…</div>
+            <h1>📋 Garuda Team Shifts <span>compare mode</span></h1>
+            <div class="update-badge" id="lastUpdated">Loading…</div>
         </div>
         <div class="subhead">
-            <div style="display: flex; align-items: center;">
-                <span class="accent-dot"></span> 
-                <span>Filter by name &nbsp;•&nbsp; Month selector</span>
-            </div>
-            <span>⚡ live sync from Sheets</span>
+            <div><span class="accent-dot"></span> Select multiple members to compare shifts together</div>
+            <span>⚡ auto‑sync from Sheets</span>
         </div>
     </div>
 
@@ -413,31 +411,32 @@
         <select id="monthSelect" class="month-select"></select>
     </div>
 
-    <!-- COMPACT FILTER PANEL (name filter is tighter) -->
+    <!-- COMPACT MULTI-SELECT CHECKLIST (Compare) -->
     <div class="filter-panel">
-        <div class="filter-group">
-            <label for="nameFilterSelect">👤 Team member</label>
-            <select id="nameFilterSelect" class="filter-select">
-                <option value="">All members</option>
-            </select>
+        <div class="multi-select-group" id="multiSelectGroup">
+            <label>👥 Compare members (multi-select)</label>
+            <div class="multi-select-trigger" id="multiSelectTrigger">
+                <span class="trigger-text" id="selectedNamesPreview">All members</span>
+                <span class="trigger-arrow">▼</span>
+            </div>
+            <div class="multi-select-dropdown" id="multiSelectDropdown">
+                <div id="checklistContainer"></div>
+                <div class="dropdown-actions">
+                    <button id="selectAllBtn">✓ Select all</button>
+                    <button id="clearAllBtn">✗ Clear</button>
+                </div>
+            </div>
         </div>
-        <button class="btn-reset" id="resetFilters">
-            <span>↻</span> Clear filters
-        </button>
+        <button class="btn-reset" id="resetFilters">↻ Clear filters & selections</button>
     </div>
 
-    <!-- Schedule table with sticky header & first column -->
+    <!-- Schedule table -->
     <div class="table-wrapper">
         <table id="scheduleTable">
-            <thead>
-                <tr id="tableHeader"></tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="10" class="empty-message">⏳ Loading schedule…</td></tr>
-            </tbody>
+            <thead><tr id="tableHeader"></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="10" class="empty-message">⏳ Loading schedule...</td></tr></tbody>
         </table>
     </div>
-    
     <div class="footer-note">
         <span>🔄 Auto‑refresh every 15 min</span>
         <a href="#" id="refreshLink">↻ Refresh now</a>
@@ -446,25 +445,30 @@
 
 <script>
     (function() {
-        "use strict";
-
-        // ---------- CONFIGURATION: ADD YOUR SHEETS CSV URLs (monthly/weekly) ----------
+        // ---------- CONFIGURATION ----------
         const monthConfig = [
             { label: "April W1", url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1752022427&single=true&output=csv" },
             { label: "April W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=778750205&single=true&output=csv" },
             { label: "May W1",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1817531407&single=true&output=csv" },
             { label: "May W2",   url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVVITCbL1Y9pdu1m1S0hC31EDjFy1vkLLgiiBXVgEeEJOlxk93M8KaT0dAu0oChiBExMgnJ2CLrIXI/pub?gid=1403554619&single=true&output=csv" }
         ];
-        // ---------------------------------------------------------
+        // -----------------------------------
 
         // DOM elements
         const monthSelect = document.getElementById('monthSelect');
-        const nameFilterSelect = document.getElementById('nameFilterSelect');
-        const resetBtn = document.getElementById('resetFilters');
         const tbody = document.getElementById('tableBody');
         const theadRow = document.getElementById('tableHeader');
         const lastUpdatedSpan = document.getElementById('lastUpdated');
         const refreshLink = document.getElementById('refreshLink');
+        const resetBtn = document.getElementById('resetFilters');
+        
+        // Multi-select elements
+        const multiSelectTrigger = document.getElementById('multiSelectTrigger');
+        const dropdown = document.getElementById('multiSelectDropdown');
+        const checklistContainer = document.getElementById('checklistContainer');
+        const selectAllBtn = document.getElementById('selectAllBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const selectedNamesPreview = document.getElementById('selectedNamesPreview');
 
         // State
         let allRows = [];
@@ -472,76 +476,11 @@
         let filteredRows = [];
         let currentCsvUrl = '';
         let nameColumns = [];
+        let uniqueNames = [];
+        let selectedNamesSet = new Set();          // stores selected member names
+        let currentMonthData = { rows: [], headers: [] };
 
-        // Extract unique names based on auto-detected name columns
-        function extractUniqueNames(rows) {
-            if (!nameColumns.length) return [];
-            const namesSet = new Set();
-            rows.forEach(row => {
-                nameColumns.forEach(col => {
-                    const val = row[col];
-                    if (val && val.toString().trim() !== '') {
-                        namesSet.add(val.toString().trim());
-                    }
-                });
-            });
-            return Array.from(namesSet).sort((a, b) => a.localeCompare(b));
-        }
-
-        // Populate the compact name dropdown
-        function populateNameDropdown() {
-            const uniqueNames = extractUniqueNames(allRows);
-            const previousValue = nameFilterSelect.value;
-            nameFilterSelect.innerHTML = '<option value="">✨ All members</option>';
-            uniqueNames.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                nameFilterSelect.appendChild(option);
-            });
-            if (previousValue && uniqueNames.includes(previousValue)) {
-                nameFilterSelect.value = previousValue;
-            } else {
-                nameFilterSelect.value = '';
-            }
-        }
-
-        // Identify name-related columns (intelligent fallback)
-        function detectNameColumns() {
-            nameColumns = headers.filter(h => 
-                /name|nama|staff|anggota|member|person|team|shift member/i.test(h)
-            );
-            if (nameColumns.length === 0 && headers.length > 0) {
-                nameColumns = [headers[0]];
-            }
-        }
-
-        // Render table with current filteredRows
-        function renderTable() {
-            if (!headers.length) {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No headers — check sheet link</td></tr>`;
-                return;
-            }
-            theadRow.innerHTML = headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
-
-            if (filteredRows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts — try another member or month</td></tr>`;
-                return;
-            }
-
-            let html = '';
-            filteredRows.forEach(row => {
-                html += '<tr>';
-                headers.forEach(header => {
-                    let value = row[header] !== undefined && row[header] !== null ? row[header] : '';
-                    html += `<td>${escapeHtml(value.toString())}</td>`;
-                });
-                html += '</tr>';
-            });
-            tbody.innerHTML = html;
-        }
-
-        // Helper to avoid XSS (just in case)
+        // Helper: escapeHtml
         function escapeHtml(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -549,21 +488,102 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
 
-        // Apply filter based on selected name
+        // Detect name columns (case-insensitive)
+        function detectNameColumns(headersList) {
+            const candidates = headersList.filter(h => 
+                /name|nama|staff|anggota|member|person|team|shift member/i.test(h)
+            );
+            if (candidates.length) return candidates;
+            return headersList.length ? [headersList[0]] : [];
+        }
+
+        // Extract unique names from rows using nameColumns
+        function extractUniqueNames(rows, columns) {
+            const set = new Set();
+            rows.forEach(row => {
+                columns.forEach(col => {
+                    const val = row[col];
+                    if (val && val.toString().trim() !== '') {
+                        set.add(val.toString().trim());
+                    }
+                });
+            });
+            return Array.from(set).sort((a,b) => a.localeCompare(b));
+        }
+
+        // Render checklist UI based on uniqueNames and selectedNamesSet
+        function renderChecklist() {
+            if (!uniqueNames.length) {
+                checklistContainer.innerHTML = '<div class="check-item" style="justify-content:center;">No members found</div>';
+                return;
+            }
+            let html = '';
+            uniqueNames.forEach(name => {
+                const checked = selectedNamesSet.has(name) ? 'checked' : '';
+                html += `
+                    <div class="check-item" data-name="${escapeHtml(name)}">
+                        <input type="checkbox" id="chk_${escapeHtml(name).replace(/\s/g, '_')}" ${checked} value="${escapeHtml(name)}">
+                        <label for="chk_${escapeHtml(name).replace(/\s/g, '_')}">${escapeHtml(name)}</label>
+                    </div>
+                `;
+            });
+            checklistContainer.innerHTML = html;
+            
+            // Attach events to each checkbox and item
+            document.querySelectorAll('.check-item').forEach(item => {
+                const cb = item.querySelector('input[type="checkbox"]');
+                const nameAttr = item.getAttribute('data-name');
+                if (cb) {
+                    cb.addEventListener('change', (e) => {
+                        e.stopPropagation();
+                        if (cb.checked) selectedNamesSet.add(nameAttr);
+                        else selectedNamesSet.delete(nameAttr);
+                        updatePreviewText();
+                        applyFilter();
+                    });
+                    item.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT') {
+                            cb.checked = !cb.checked;
+                            const event = new Event('change', { bubbles: true });
+                            cb.dispatchEvent(event);
+                        }
+                    });
+                }
+            });
+        }
+
+        function updatePreviewText() {
+            const count = selectedNamesSet.size;
+            if (count === 0) {
+                selectedNamesPreview.textContent = '✨ All members (compare mode)';
+            } else if (count <= 2) {
+                selectedNamesPreview.textContent = Array.from(selectedNamesSet).join(', ');
+            } else {
+                selectedNamesPreview.textContent = `${count} members selected`;
+            }
+        }
+
+        // Apply multi-select filter: show rows where ANY name column matches ANY selected name
         function applyFilter() {
-            const selectedName = nameFilterSelect.value;
-            if (selectedName === '') {
+            if (!allRows.length) {
+                filteredRows = [];
+                renderTable();
+                updateResultCount();
+                return;
+            }
+            
+            if (selectedNamesSet.size === 0) {
+                // Show all rows (all members)
                 filteredRows = [...allRows];
             } else {
                 filteredRows = allRows.filter(row => {
+                    // For each row, check if any name column value is in selectedNamesSet
                     return nameColumns.some(col => {
-                        const val = (row[col] || '').toString().trim();
-                        return val === selectedName;
+                        const cellVal = (row[col] || '').toString().trim();
+                        return selectedNamesSet.has(cellVal);
                     });
                 });
             }
@@ -571,101 +591,144 @@
             updateResultCount();
         }
 
+        function renderTable() {
+            if (!headers.length) {
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No data — check sheet</td></tr>`;
+                return;
+            }
+            theadRow.innerHTML = headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-message">✨ No matching shifts for selected members. Try other names or clear filter.</td></tr>`;
+                return;
+            }
+            let html = '';
+            filteredRows.forEach(row => {
+                html += '<tr>';
+                headers.forEach(header => {
+                    let val = row[header] !== undefined ? row[header] : '';
+                    html += `<td>${escapeHtml(val.toString())}</td>`;
+                });
+                html += '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
         function updateResultCount() {
-            const count = filteredRows.length;
             const total = allRows.length;
-            lastUpdatedSpan.textContent = `📋 ${count} of ${total} entries`;
+            const shown = filteredRows.length;
+            const selectedCount = selectedNamesSet.size;
+            if (selectedCount === 0) lastUpdatedSpan.textContent = `👥 All members · ${total} shifts`;
+            else lastUpdatedSpan.textContent = `🔍 ${shown} of ${total} shifts (${selectedCount} member${selectedCount > 1 ? 's' : ''} selected)`;
         }
 
-        function resetFilters() {
-            nameFilterSelect.value = '';
-            filteredRows = [...allRows];
-            renderTable();
-            updateResultCount();
+        function resetAllFilters() {
+            selectedNamesSet.clear();
+            updatePreviewText();
+            renderChecklist();   // re-render checkboxes unchecked
+            applyFilter();       // this shows all rows again
         }
 
-        // Load CSV from Google Sheets public link using PapaParse
+        // Load CSV and init data
         async function loadSheetData(url) {
             try {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule from sheet...</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⏳ Fetching schedule...</td></tr>`;
                 lastUpdatedSpan.textContent = '⟳ Updating...';
-                
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const csvText = await response.text();
-                
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
                     complete: (results) => {
                         headers = results.meta.fields || [];
-                        allRows = results.data.filter(row => 
+                        let rawRows = results.data.filter(row => 
                             Object.values(row).some(v => v !== null && v !== undefined && v.toString().trim() !== '')
                         );
-                        
-                        detectNameColumns();
-                        populateNameDropdown();
-                        
-                        filteredRows = [...allRows];
-                        renderTable();
-                        updateResultCount();
-                        
+                        allRows = rawRows;
+                        nameColumns = detectNameColumns(headers);
+                        uniqueNames = extractUniqueNames(allRows, nameColumns);
+                        // Reset selection when month changes (clear compare set)
+                        selectedNamesSet.clear();
+                        renderChecklist();
+                        updatePreviewText();
+                        applyFilter();  // shows all rows because set empty
                         const now = new Date();
                         lastUpdatedSpan.textContent = `🕘 ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} · ${allRows.length} rows`;
                     },
                     error: (err) => {
                         console.error(err);
-                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ CSV parse error — check sheet format</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Parse error — check CSV format</td></tr>`;
                         lastUpdatedSpan.textContent = 'Parse error';
                     }
                 });
-            } catch (error) {
-                console.error(error);
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Failed to load data. Verify sheet URL & public access.</td></tr>`;
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">❌ Failed to load — verify sheet URL</td></tr>`;
                 lastUpdatedSpan.textContent = 'Connection failed';
             }
         }
 
-        // Initialize month dropdown & set default
+        // Month selector init
         function initMonthSelector() {
             monthSelect.innerHTML = '';
-            monthConfig.forEach((month, idx) => {
-                const option = document.createElement('option');
-                option.value = month.url;
-                option.textContent = month.label;
-                monthSelect.appendChild(option);
+            monthConfig.forEach(month => {
+                const opt = document.createElement('option');
+                opt.value = month.url;
+                opt.textContent = month.label;
+                monthSelect.appendChild(opt);
             });
-            
-            if (monthConfig.length > 0) {
+            if (monthConfig.length) {
                 currentCsvUrl = monthConfig[0].url;
                 loadSheetData(currentCsvUrl);
-            } else {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-message">⚠️ No month URLs configured. Edit 'monthConfig'.</td></tr>`;
             }
-
             monthSelect.addEventListener('change', (e) => {
                 currentCsvUrl = e.target.value;
                 loadSheetData(currentCsvUrl);
-                // Reset name filter after month change to avoid stale filter
-                nameFilterSelect.value = '';
             });
         }
 
-        // Event wiring
-        nameFilterSelect.addEventListener('change', applyFilter);
-        resetBtn.addEventListener('click', resetFilters);
-        
+        // Dropdown toggle & outside click
+        function initDropdownEvents() {
+            multiSelectTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!multiSelectGroup.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+            selectAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                uniqueNames.forEach(name => selectedNamesSet.add(name));
+                renderChecklist();
+                updatePreviewText();
+                applyFilter();
+                dropdown.classList.remove('show');
+            });
+            clearAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectedNamesSet.clear();
+                renderChecklist();
+                updatePreviewText();
+                applyFilter();
+                dropdown.classList.remove('show');
+            });
+        }
+
+        resetBtn.addEventListener('click', () => {
+            resetAllFilters();
+        });
         refreshLink.addEventListener('click', (e) => {
             e.preventDefault();
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         });
-
-        // Auto-refresh every 15 minutes
         setInterval(() => {
             if (currentCsvUrl) loadSheetData(currentCsvUrl);
         }, 15 * 60 * 1000);
 
         initMonthSelector();
+        initDropdownEvents();
     })();
 </script>
 </body>
