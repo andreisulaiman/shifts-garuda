@@ -396,11 +396,11 @@
 <div class="container">
     <div class="header-section">
         <div class="header-top">
-            <h1>📋 Garuda Team Shifts <span>compare mode</span></h1>
+            <h1>📋 Calabrion~ <span>compare mode</span></h1>
             <div class="update-badge" id="lastUpdated">Loading…</div>
         </div>
         <div class="subhead">
-            <div><span class="accent-dot"></span> Select multiple members to compare shifts together</div>
+            <div><span class="accent-dot"></span> Use the filter to compare shifts. </div>
             <span>⚡ auto‑sync from Sheets</span>
         </div>
     </div>
@@ -414,7 +414,7 @@
     <!-- COMPACT MULTI-SELECT CHECKLIST (Compare) -->
     <div class="filter-panel">
         <div class="multi-select-group" id="multiSelectGroup">
-            <label>👥 Compare members (multi-select)</label>
+            <label>👥 Members </label>
             <div class="multi-select-trigger" id="multiSelectTrigger">
                 <span class="trigger-text" id="selectedNamesPreview">All members</span>
                 <span class="trigger-arrow">▼</span>
@@ -558,7 +558,7 @@
         function updatePreviewText() {
             const count = selectedNamesSet.size;
             if (count === 0) {
-                selectedNamesPreview.textContent = '✨ All members (compare mode)';
+                selectedNamesPreview.textContent = '✨ All members';
             } else if (count <= 2) {
                 selectedNamesPreview.textContent = Array.from(selectedNamesSet).join(', ');
             } else {
